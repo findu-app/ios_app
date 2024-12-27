@@ -11,24 +11,28 @@ struct GoogleButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack {
+            HStack(spacing: 8.0) {
                 Image("googleIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 16)
+                    .frame(height: 16)
                 
                 Text("Continue with Google")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
+                    .font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
+                    .foregroundColor(Color("OnSurface"))
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.white)
-            .cornerRadius(8)
+            .background(Color("SurfaceContainer"))
+            .cornerRadius(10)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color("Border"), lineWidth: 1)
             )
         }
     }
+}
+
+#Preview {
+    GoogleButton { }
 }

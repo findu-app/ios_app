@@ -12,21 +12,25 @@ struct AppleButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack {
+            HStack(spacing: 8.0) {
                 Image(systemName: "applelogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 16)
-                    .foregroundColor(.white)
+                    .frame(height: 16)
+                    .foregroundColor(Color("Surface"))
                 
-                Text("Continue with Apple")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                Text("Continue with Apple").font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
+                    .foregroundColor(Color("Surface"))
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.black)
-            .cornerRadius(8)
+            .background(Color("OnSurface"))
+            .cornerRadius(10)
         }
     }
+}
+
+#Preview {
+    AppleButton{
+        }
 }

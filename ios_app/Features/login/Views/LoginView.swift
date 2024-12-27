@@ -8,80 +8,31 @@
 import SwiftUI
 
 struct LoginView: View {
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         VStack {
             Spacer()
             
-            // Welcome Text
             Text("Welcome to")
-                .font(.system(size: 32))
-                .foregroundColor(Color(red: 111/255, green: 111/255, blue: 111/255))
-            // Logo
-            Image("finduLogoFull")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 250)
+                .font(Font.custom("Plus Jakarta Sans Light" ,  size: 32.0))
+                .foregroundColor(Color("Secondary"))
+            
+            Image(colorScheme == .dark ? "finduLogoFull_dark" : "finduLogoFull_light")
             
             Spacer()
 
-            // Continue Buttons
             VStack(spacing: 16) {
-                Button(action: {
-                }) {
-                    HStack {
-                        Image(systemName: "applelogo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 16)
-                            .foregroundColor(.white)
-                            .alignmentGuide(.lastTextBaseline) { dimensions in
-                                            dimensions[VerticalAlignment.center]
-                                        }
-
-                        Text("Continue with Apple")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.black)
-                    .cornerRadius(8)
-                    
-
+                AppleButton {
+                    print("Apple button tapped")
                 }
 
-                Button(action: {
-                }) {
-                    HStack {
-                        Image("googleIcon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 16)
-                        Text("Continue with Google")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                GoogleButton {
+                    print("Google button tapped")
                 }
 
-                Button(action: {
-                }) {
-                    HStack {
-                        Text("Continue with Email")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(red: 229/255, green: 73/255, blue: 73/255))
-                    .cornerRadius(8)
+                EmailButton {
+                    print("Email button tapped")
                 }
             }
             .padding(.horizontal, 16)
