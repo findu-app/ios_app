@@ -1,34 +1,36 @@
 //
-//  EmailButton.swift
+//  AppleButton.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/26/24.
 //
+
 import SwiftUI
 
-struct EmailButton: View {
+struct AppleButton: View {
     var action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8.0) {
-                Image(systemName: "envelope")
+                Image(systemName: "applelogo")
                     .resizable()
                     .scaledToFit()
                     .frame(height: 16)
-                    .foregroundColor(Color("OnPrimary"))
+                    .foregroundColor(Color("surface"))
                 
-                Text("Continue with Email").font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
-                    .foregroundColor(Color("OnPrimary"))
+                Text("Continue with Apple").font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
+                    .foregroundColor(Color("surface"))
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color("Primary"))
-            .cornerRadius(10.0)
+            .background(Color("onSurface"))
+            .cornerRadius(10)
         }
     }
 }
 
 #Preview {
-    EmailButton{}
+    AppleButton{
+        }
 }
