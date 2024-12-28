@@ -31,16 +31,17 @@ struct LoginView: View {
                     print("Google button tapped")
                 }
 
-                EmailButton {
-                    print("Email button tapped")
+                IconButton(iconName: "envelope", text: "Continue with Email") {
+                    print("Button tapped")
                 }
             }
             .padding(.horizontal, 16)
 
             Spacer()
-                .frame(height: 48)
+                .frame(height: 52)
         }
         .background(Color(.systemGray6))
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
