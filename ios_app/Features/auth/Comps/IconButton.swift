@@ -1,34 +1,55 @@
 //
-//  EmailButton.swift
+//  IconButton.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/26/24.
 //
+
 import SwiftUI
 
-struct EmailButton: View {
+struct IconButton: View {
+    var iconName: String
+    var text: String
     var action: () -> Void
+    var backgroundColor: Color = Color("primary")
+    var foregroundColor: Color = Color("onPrimary")
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8.0) {
-                Image(systemName: "envelope")
+                Image(systemName: iconName)
                     .resizable()
                     .scaledToFit()
                     .frame(height: 16)
-                    .foregroundColor(Color("onPrimary"))
+                    .foregroundColor(foregroundColor)
                 
-                Text("Continue with Email").font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
-                    .foregroundColor(Color("onPrimary"))
+                Text(text)
+                    .font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
+                    .foregroundColor(foregroundColor)
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color("primary"))
+            .background(backgroundColor)
             .cornerRadius(10.0)
         }
     }
 }
 
 #Preview {
-    EmailButton{}
+    VStack(spacing: 16) {
+        IconButton(
+            iconName: "envelope",
+            text: "Continue with Email",
+            action: { print("Email Button tapped") },
+            backgroundColor: Color("secondary"),
+            foregroundColor: Color("onSurface")
+        )
+        
+        IconButton(
+            iconName: "book",
+            text: "Default Colors",
+            action: { print("Default Button tapped") }
+        )
+    }
+    .padding()
 }

@@ -7,71 +7,62 @@
 
 
 import SwiftUI
-import Supabase
 
 struct LoginWithEmailView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var errorMessage: String? = nil
-    @EnvironmentObject var supabaseClient: SupabaseClient
+    @Binding var path: [String]
+    @StateObject private var viewModel = LoginWithEmailViewModel()
     
     var body: some View {
         VStack {
             Spacer()
+                .frame(height: 180)
             
-            Text("Log in")
-                .font(.title)
-                .fontWeight(.bold)
+            Text("Log In")
+                .font(Font.custom("Plus Jakarta Sans Bold", size: 32.0))
+                .fontWeight(.semibold)
             
-            VStack(spacing: 16) {
-                TextField("Email", text: $email)
-                    .autocapitalization(.none)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            VStack(spacing: 24) {
+                CustomTextField(placeholder: "Email", text: $viewModel.email, fontSize: 14)
+                CustomTextField(placeholder: "Password", text: $viewModel.password, fontSize: 16, isSecure: true)
                 
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                if let errorMessage = errorMessage {
+                if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
-                        .font(.caption)
                 }
                 
-                Button(action: handleLogin) {
-                    Text("Log in")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                IconButton(iconName: "", text: "Log In") {
+                    viewModel.handleLogin(path: $path)
                 }
             }
             .padding()
             
             Spacer()
+                .frame(height: 243)
             
-            HStack {
-                Text("Don’t have an account?")
-                Button(action: {
-                    // Navigate to SignupView
-                }) {
-                    Text("Create an Account")
-                        .fontWeight(.semibold)
-                }
+            VStack(spacing: 8) {
+                Text("Don't have an account?")
+                    .foregroundColor(Color("secondary"))
+                
+                IconButton(
+                    iconName: "",
+                    text: "Sign Up",
+                    action: { path.removeAll(); path.append("signup") },
+                    backgroundColor: Color("SurfaceContainer"),
+                    foregroundColor: Color("onSurface")
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("Border"), lineWidth: 1)
+                )
             }
             .padding(.bottom)
+            
+            Spacer()
+                .frame(height: 61)
         }
         .padding()
-    }
-    
-    func handleLogin() {
-        Task {
-            do {
-                let session = try await supabaseClient.auth.signIn(email: email, password: password)
-                print("Logged in: \(session)")
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-        }
+        .navigationBarBackButtonHidden(false)
+        .edgesIgnoringSafeArea(.all)
     }
 }
+

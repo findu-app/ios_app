@@ -1,21 +1,25 @@
+//
+//  SuccessView.swift
+//  ios_app
+//
+//  Created by Wilson Overfield on 12/28/24.
+//
+
 import SwiftUI
 import Supabase
 
 struct SuccessView: View {
-    @Binding var path: [String]
 
     func handleSignOut() {
-        // Sign out with Supabase
         Task {
             do {
-                try await Supabase.auth.signOut()
-                path.removeAll()  // Clear the path to reset the navigation stack
-                path.append("login")  // Navigate back to login screen
+                try await supabase.auth.signOut()
             } catch {
                 print("Error signing out: \(error.localizedDescription)")
             }
         }
     }
+
 
     var body: some View {
         VStack {
@@ -29,6 +33,11 @@ struct SuccessView: View {
             }
             .padding()
         }
-        .navigationBarBackButtonHidden(false)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
     }
+}
+
+#Preview {
+    SuccessView()
 }

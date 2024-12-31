@@ -4,8 +4,25 @@
 <dict>
 	<key>CFBundleURLTypes</key>
 	<array>
-		<dict/>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.696135661337-63dnqil4kjmi5utki614m82bbgvjpvbp</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.696135661337-r9kpqia9cj3p2b548sbqgjb4askbktjg</string>
+			</array>
+		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>696135661337-r9kpqia9cj3p2b548sbqgjb4askbktjg.apps.googleusercontent.com</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>PlusJakartaSans-ExtraLight.ttf</string>

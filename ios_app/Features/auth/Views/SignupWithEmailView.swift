@@ -7,68 +7,101 @@
 
 
 import SwiftUI
-import Supabase
 
 struct SignupWithEmailView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var errorMessage: String? = nil
-    
+    @Binding var path: [String]
+    @StateObject private var viewModel = SignupWithEmailViewModel()
+    @State private var isModalPresented: Bool = false
+
     var body: some View {
         VStack {
             Spacer()
+                .frame(height: 180)
             
-            Text("Log in")
-                .font(.title)
+            Text("Create an Account")
+                .font(Font.custom("Plus Jakarta Sans Bold", size: 32.0))
                 .fontWeight(.semibold)
             
             VStack(spacing: 24) {
-                CustomTextField(placeholder: "Email", text: $email, fontSize: 14)
-                CustomTextField(placeholder: "Password", text: $password, fontSize: 16, isSecure: true)
-                CustomTextField(placeholder: "Confirm Password", text: $password, fontSize: 16, isSecure: true)
-
-                IconButton(iconName: "", text: "Login") {
-                    print("Login button tapped")
+                CustomTextField(placeholder: "Email", text: $viewModel.email, fontSize: 14)
+                CustomTextField(placeholder: "Password", text: $viewModel.password, fontSize: 16, isSecure: true)
+                CustomTextField(placeholder: "Confirm Password", text: $viewModel.confirmPassword, fontSize: 16, isSecure: true)
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                }
+                
+                IconButton(iconName: "", text: "Sign Up") {
+                    viewModel.handleSignup(path: $path, isModalPresented: $isModalPresented)
                 }
             }
             .padding()
             
             Spacer()
-                .frame(height: 243)
+                .frame(height: 174)
             
-            VStack {
-                Text("Don’t have an account?")
+            VStack(spacing: 8) {
+                Text("Already have an account?")
                     .foregroundColor(Color("secondary"))
+                
                 IconButton(
                     iconName: "",
-                    text: "Create an Accouxnt",
-                    action: { print("Apple button tapped") },
+                    text: "Log In",
+                    action: { path.removeAll(); path.append("login") },
                     backgroundColor: Color("SurfaceContainer"),
                     foregroundColor: Color("onSurface")
                 )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color("Border"), lineWidth: 1)
-                    )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("Border"), lineWidth: 1)
+                )
             }
             .padding(.bottom)
+            
+            Spacer()
+                .frame(height: 61)
         }
         .padding()
+        .navigationBarBackButtonHidden(false)
+        .edgesIgnoringSafeArea(.all)
+        .overlay(
+            Group {
+                if isModalPresented {
+                    VStack {
+                        Text("Confirm Account In Your Email")
+                            .font(Font.custom("Plus Jakarta Sans Light", size: 24.0))
+                            .padding()
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
+                        
+                        IconButton(iconName: "envelope", text: "OK") {
+                            isModalPresented = false
+                            path.removeAll()
+                            path.append("login")
+                        }
+                        .frame(width: 200, height: 50)
+                    }
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color("Border"), lineWidth: 3)
+                    )
+                    .background(Color("allWhite"))
+                    .foregroundColor(Color("onSurface"))
+                    .cornerRadius(10)
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut)
+                }
+            }
+        )
     }
-    
-//    func handleLogin() {
-//        Task {
-//            do {
-//                let session = try await supabaseClient.auth.signIn(email: email, password: password)
-//                print("Logged in: \(session)")
-//            } catch {
-//                errorMessage = error.localizedDescription
-//            }
-//        }
-//    }
 }
 
-
-#Preview {
-    LoginWithEmailView()
+struct SignupWithEmailView_Previews: PreviewProvider {
+    static var previews: some View {
+        SignupWithEmailView(path: .constant([]))
+            .previewLayout(.sizeThatFits)
+            .padding()
+    }
 }
