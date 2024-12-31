@@ -9,6 +9,8 @@
 *.mode2v3
 *.perspectivev3
 *.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
 *.xccheckout
 *.xcscmblueprint
 
