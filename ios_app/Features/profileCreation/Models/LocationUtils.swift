@@ -11,7 +11,7 @@ import MapKit
 
 /// Utility struct for handling location-related functionality, such as fetching coordinates for a given address.
 struct LocationUtils {
-    
+
     /// Fetches geographic coordinates for a given address.
     /// - Parameters:
     ///   - address: The address string to geocode.
@@ -26,17 +26,17 @@ struct LocationUtils {
         completion: @escaping (Result<CLLocationCoordinate2D, Error>) -> Void
     ) {
         let geocoder = CLGeocoder()
-        
+
         // Geocode the address string to fetch placemark data
         geocoder.geocodeAddressString(address) { placemarks, error in
             if let error = error {
                 completion(.failure(error))
                 return
             }
-            
+
             // Extract the location from the first placemark
             if let placemark = placemarks?.first,
-               let location = placemark.location
+                let location = placemark.location
             {
                 completion(.success(location.coordinate))
             } else {
@@ -52,7 +52,7 @@ struct LocationUtils {
             }
         }
     }
-    
+
     /// Fetches address suggestions based on the user's input query.
     /// - Parameters:
     ///   - query: The input string entered by the user.
@@ -70,11 +70,11 @@ struct LocationUtils {
             completion([])  // Return empty suggestions for empty query
             return
         }
-        
+
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         let search = MKLocalSearch(request: request)
-        
+
         search.start { response, error in
             if let error = error {
                 print(
@@ -82,7 +82,7 @@ struct LocationUtils {
                 completion([])  // Return empty suggestions on error
                 return
             }
-            
+
             if let mapItems = response?.mapItems {
                 let suggestions = Array(
                     Set(
@@ -96,7 +96,7 @@ struct LocationUtils {
             }
         }
     }
-    
+
     /// Fetches high school suggestions based on the user's input query.
     /// - Parameters:
     ///   - query: The input string entered by the user.
@@ -114,11 +114,11 @@ struct LocationUtils {
             completion([])  // Return an empty array if the query is empty
             return
         }
-        
+
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = "\(query) high school"
         request.resultTypes = [.pointOfInterest]
-        
+
         let search = MKLocalSearch(request: request)
         search.start { response, error in
             if let error = error {
@@ -128,10 +128,11 @@ struct LocationUtils {
                 completion([])
                 return
             }
-            
+
             if let mapItems = response?.mapItems {
                 let suggestions = mapItems.compactMap { item -> String? in
-                    guard let name = item.name, let address = item.placemark.title
+                    guard let name = item.name,
+                        let address = item.placemark.title
                     else { return nil }
                     return "\(name), \(address)"
                 }
@@ -141,22 +142,25 @@ struct LocationUtils {
             }
         }
     }
-    
+
     /// Formats a high school suggestion to include only the school name, city, and state.
     /// - Parameter suggestion: A string in the format "Name of school, address, city, state, zip".
     /// - Returns: A formatted string containing the school name, city, and state. If the input format is invalid, the original suggestion string is returned unchanged.
     static func formatHSSuggestion(_ suggestion: String) -> String {
-        let components = suggestion.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
-        
+        let components = suggestion.split(separator: ",").map {
+            $0.trimmingCharacters(in: .whitespaces)
+        }
+
         guard components.count >= 4 else {
             return suggestion
         }
-        
+
         let schoolName = components[0]
         let city = components[components.count - 3]
         let stateZip = components[components.count - 2]
-        
-        let state = stateZip.split(separator: " ").first.map(String.init) ?? stateZip
+
+        let state =
+            stateZip.split(separator: " ").first.map(String.init) ?? stateZip
 
         // Return the formatted string
         return "\(schoolName), \(city), \(state)"

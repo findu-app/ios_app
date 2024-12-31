@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct ios_app: App {
-    @StateObject private var globalStudentState = GlobalStudentState()
+    @StateObject private var globalStudentState = GlobalStudentDataState()
 
     var body: some Scene {
         WindowGroup {

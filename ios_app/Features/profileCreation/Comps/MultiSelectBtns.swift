@@ -1,8 +1,15 @@
+//
+//  HighSchoolSuggestionsDrawer.swift
+//  ios_app
+//
+//  Created by Kenny Morales on 12/30/24.
+//
+
 import SwiftUI
 
 struct MultiSelectBtns: View {
-    @Binding var selectedOptions: [String] // Holds the selected options
-    let options: [String] // Available options
+    @Binding var selectedOptions: [String]  // Holds the selected options
+    let options: [String]  // Available options
 
     var body: some View {
         ScrollView {
@@ -14,7 +21,10 @@ struct MultiSelectBtns: View {
                         Text(option)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
-                            .font(Font.custom("Plus Jakarta Sans Medium", size: 12))
+                            .font(
+                                Font.custom(
+                                    "Plus Jakarta Sans Medium", size: 12)
+                            )
                             .background(
                                 selectedOptions.contains(option)
                                     ? Color("Primary").opacity(0.2)

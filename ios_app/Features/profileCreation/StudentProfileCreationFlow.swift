@@ -1,5 +1,5 @@
 //
-//  CreationFlow.swift
+//  StudentProfileCreationFlow.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/27/24.
@@ -7,29 +7,28 @@
 
 import SwiftUI
 
-struct CreationFlow: View {
-    @State private var studentData = CreationFlowData()
+struct StudentProfileCreationFlow: View {
+    @State private var studentData = StudentProfileData()
     @State private var currentSectionIndex: Int = 0
     @State private var currentStepIndex: Int = 0
-    
-    @EnvironmentObject var globalStudentState: GlobalStudentState // Access GlobalStudentState
 
-    
+    @EnvironmentObject var globalStudentState: GlobalStudentDataState  // Access GlobalStudentState
+
     private let validator = SignupValidator()
     @State private var validationError: String?
-    
+
     private var steps: [(section: String, views: [() -> AnyView])] {
         CreationFlowSteps.steps(studentData: $studentData)
     }
-    
+
     private var currentSection: String {
         steps[currentSectionIndex].section
     }
-    
+
     private var currentSteps: [() -> AnyView] {
         steps[currentSectionIndex].views
     }
-    
+
     private var isStepValid: Bool {
         validator.validate(
             section: currentSection,
@@ -37,12 +36,12 @@ struct CreationFlow: View {
             data: studentData
         )
     }
-    
+
     private var isLastStep: Bool {
-        currentSectionIndex == steps.count - 1 &&
-        currentStepIndex == currentSteps.count - 1
+        currentSectionIndex == steps.count - 1
+            && currentStepIndex == currentSteps.count - 1
     }
-    
+
     var body: some View {
         ZStack {
             // Main Content
@@ -53,7 +52,7 @@ struct CreationFlow: View {
                     currentStep: completedSteps,
                     currentSection: currentSection
                 )
-                
+
                 // Render current step
                 if currentStepIndex < currentSteps.count {
                     currentSteps[currentStepIndex]()
@@ -62,10 +61,10 @@ struct CreationFlow: View {
                         .font(.system(size: 24))
                         .foregroundColor(Color("OnSurface"))
                 }
-                
+
                 Spacer()  // Push content up
             }
-            
+
             // Continue Button
             VStack {
                 Spacer()  // Push button to the bottom
@@ -92,17 +91,17 @@ struct CreationFlow: View {
         .padding(.horizontal, 16)
         .background(Color("Surface"))
     }
-    
+
     // Helpers
     private var totalSteps: Int {
         steps.flatMap { $0.views }.count
     }
-    
+
     private var completedSteps: Int {
         steps.prefix(currentSectionIndex).flatMap { $0.views }.count
-        + currentStepIndex
+            + currentStepIndex
     }
-    
+
     private func handleContinue() {
         if isStepValid {
             validationError = nil
@@ -115,8 +114,8 @@ struct CreationFlow: View {
                 currentStepIndex = 0
             } else {
                 // If on the last step, save the student profile
-                let studentInfo = studentData.toStudentInfo() // Transform the data
-                globalStudentState.saveStudentInfo(from: studentInfo) // Save globally
+                let studentInfo = studentData.toStudentInfo()  // Transform the data
+                globalStudentState.saveStudentInfo(from: studentInfo)  // Save globally
             }
         } else {
             validationError = "Please complete this step before continuing."
@@ -125,5 +124,5 @@ struct CreationFlow: View {
 }
 
 #Preview {
-    CreationFlow()
+    StudentProfileCreationFlow()
 }

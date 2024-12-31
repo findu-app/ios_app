@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PhoneNumberTextField: View {
-    @Binding var userInput: String // Raw input is stored here
+    @Binding var userInput: String  // Raw input is stored here
     var placeholder: String
     @FocusState private var isFocused: Bool
 
@@ -27,7 +27,9 @@ struct PhoneNumberTextField: View {
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color("SurfaceContainer"))
-                        .stroke(isFocused ? Color("OnSurface") : Color("Border"), lineWidth: 1)
+                        .stroke(
+                            isFocused ? Color("OnSurface") : Color("Border"),
+                            lineWidth: 1)
                 )
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
                 .toolbar {
@@ -46,5 +48,6 @@ struct PhoneNumberTextField: View {
 }
 
 #Preview {
-    PhoneNumberTextField(userInput: .constant("1234567890"), placeholder: "(XXX) - XXX - XXXX")
+    PhoneNumberTextField(
+        userInput: .constant("1234567890"), placeholder: "(XXX) - XXX - XXXX")
 }

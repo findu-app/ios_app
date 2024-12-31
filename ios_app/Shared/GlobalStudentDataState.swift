@@ -1,5 +1,5 @@
 //
-//  GlobalStudentState.swift
+//  GlobalStudentDataState.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class GlobalStudentState: ObservableObject {
+class GlobalStudentDataState: ObservableObject {
     @Published var studentInfo: StudentInfo? {
         didSet {
             saveToUserDefaults()
@@ -42,7 +42,8 @@ class GlobalStudentState: ObservableObject {
 
     /// Loads `StudentInfo` from UserDefaults
     private func loadFromUserDefaults() {
-        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey) else { return }
+        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey)
+        else { return }
 
         do {
             studentInfo = try JSONDecoder().decode(StudentInfo.self, from: data)

@@ -1,5 +1,5 @@
 //
-//  NumberField.swift
+//  NumberTextField.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NumberField: View {
-    @Binding var userInput: String // Raw input is stored here
+struct NumberTextField: View {
+    @Binding var userInput: String  // Raw input is stored here
     var keyboardType: UIKeyboardType
     var maxLength: Int
     var placeholder: String
@@ -28,7 +28,9 @@ struct NumberField: View {
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color("SurfaceContainer"))
-                        .stroke(isFocused ? Color("OnSurface") : Color("Border"), lineWidth: 1)
+                        .stroke(
+                            isFocused ? Color("OnSurface") : Color("Border"),
+                            lineWidth: 1)
                 )
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 20))
                 .toolbar {
@@ -47,5 +49,7 @@ struct NumberField: View {
 }
 
 #Preview {
-    NumberField(userInput: .constant("1234567890"), keyboardType: .numberPad, maxLength: 4, placeholder: "Enter number")
+    NumberTextField(
+        userInput: .constant("1234567890"), keyboardType: .numberPad,
+        maxLength: 4, placeholder: "Enter number")
 }

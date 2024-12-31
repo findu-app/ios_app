@@ -1,5 +1,5 @@
 //
-//  NameGenderInputView.swift
+//  NameGenderEntryView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/27/24.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct NameGenderInputView: View {
-    @Binding var studentName: String
-    @Binding var studentGender: String
+struct NameGenderEntryView: View {
+    @Binding var name: String
+    @Binding var gender: String
 
     var body: some View {
         ScrollView {
@@ -17,9 +17,9 @@ struct NameGenderInputView: View {
                 // Name Input
                 VStack(alignment: .center, spacing: 24.0) {
                     Text("What's your full name?").centeredTitleTextStyle()
-                    
-                    StringField(
-                        userInput: $studentName,
+
+                    StringTextField(
+                        userInput: $name,
                         placeholder: "Enter your name"
                     )
                 }
@@ -27,9 +27,9 @@ struct NameGenderInputView: View {
                 // Gender Selection
                 VStack(alignment: .center, spacing: 24.0) {
                     Text("What's your gender?").centeredTitleTextStyle()
-                    
+
                     SingleSelectBtns(
-                        selectedOption: $studentGender,
+                        selectedOption: $gender,
                         options: Gender.allCases.map { $0.rawValue }
                     )
                 }
@@ -40,8 +40,8 @@ struct NameGenderInputView: View {
 }
 
 #Preview {
-    NameGenderInputView(
-        studentName: .constant(""),
-        studentGender: .constant("")
+    NameGenderEntryView(
+        name: .constant(""),
+        gender: .constant("")
     )
 }

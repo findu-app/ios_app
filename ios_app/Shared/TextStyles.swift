@@ -23,5 +23,3 @@ extension View {
         self.modifier(CenteredTitleTextStyle())
     }
 }
-
-

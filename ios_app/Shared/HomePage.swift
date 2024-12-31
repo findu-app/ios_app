@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomePage: View {
-    @EnvironmentObject var globalStudentState: GlobalStudentState
+    @EnvironmentObject var globalStudentState: GlobalStudentDataState
 
     var body: some View {
         VStack {

@@ -43,19 +43,19 @@ struct StudentInfo: Codable {
 }
 
 // MARK: - Supporting Enums
-enum Gender: String, CaseIterable, Codable  {
+enum Gender: String, CaseIterable, Codable {
     case male = "Male"
     case female = "Female"
     case other = "Other"
 }
 
-enum ContactMethod: String, CaseIterable, Codable  {
+enum ContactMethod: String, CaseIterable, Codable {
     case email = "Email"
     case phone = "Phone"
     case messages = "Messages"
 }
 
-enum GraduationYear: Int, CaseIterable, Codable  {
+enum GraduationYear: Int, CaseIterable, Codable {
     case year2023 = 2023
     case year2024 = 2024
     case year2025 = 2025
