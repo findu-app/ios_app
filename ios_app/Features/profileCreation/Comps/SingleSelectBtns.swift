@@ -8,27 +8,27 @@
 import SwiftUI
 
 struct SingleSelectBtns: View {
-    let options: [String] // Accept options as a prop
-    @State private var selectedOption: String? = nil // Track selected option
+    @Binding var selectedOption: String
+    let options: [String]
 
     var body: some View {
-        VStack(spacing: 16) { // Stack buttons vertically with spacing
+        VStack(spacing: 12) { // Stack buttons vertically with spacing
             ForEach(options, id: \.self) { option in
                 Button(action: {
                     selectedOption = option // Update selected option
                 }) {
                     Text(option)
-                        .padding()
-                        .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
+                        .padding(.vertical, 22)
+                        .font(Font.custom("Plus Jakarta Sans Medium", size: 14))
                         .fontWeight(selectedOption == option ? .semibold : .regular)
                         .frame(maxWidth: .infinity)
-                        .background(selectedOption == option ? Color("Primary") : Color("SurfaceContainer"))
-                        .foregroundColor(selectedOption == option ? Color("OnPrimary") : Color("Secondary"))
-                        .cornerRadius(8)
+                        .background(selectedOption == option ? Color("Primary").opacity(0.2) : Color("SurfaceContainer"))
+                        .foregroundColor(selectedOption == option ? Color("Primary") : Color("Secondary"))
+                        .cornerRadius(10)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 10)
                                 .stroke(
-                                    selectedOption == option ? Color.clear : Color("Border"),
+                                    selectedOption == option ? Color("Primary") : Color("Border"),
                                     lineWidth: 1
                                 )
                         )
@@ -39,5 +39,5 @@ struct SingleSelectBtns: View {
 }
 
 #Preview {
-    SingleSelectBtns(options: ["Email", "Phone", "Messages"])
+    SingleSelectBtns(selectedOption: .constant("Phone"),options: ["Email", "Phone", "Messages"])
 }

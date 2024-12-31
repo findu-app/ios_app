@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "6917BCCD-0F7D-4647-969E-D30D501E92C0"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "674AB1D8-62AA-4A90-BEEC-F648DD5C904C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../var/folders/fl/21x20td55t39fg_g685gj4s00000gn/T/swift-generated-sources/@__swiftmacro_7ios_app0031SignupNameGenderViewswift_yFFIifMX37_0_33_363FC21F0AB8771060D836558FE9155FLl7PreviewfMf_.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2"
+            endingLineNumber = "2"
+            landmarkName = "$s7ios_app0031SignupNameGenderViewswift_yFFIifMX37_0_33_363FC21F0AB8771060D836558FE9155FLl7PreviewfMf_15PreviewRegistryfMu_"
+            landmarkType = "37">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
