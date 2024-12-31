@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct ios_app: App {
+    @StateObject private var globalStudentState = GlobalStudentState()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(globalStudentState)
         }
     }
 }
