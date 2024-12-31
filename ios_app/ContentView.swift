@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var globalStudentState: GlobalStudentState
+    @EnvironmentObject var globalStudentState: GlobalStudentDataState
 
     var body: some View {
         if globalStudentState.studentInfo == nil {
             // Show CreationFlow if no StudentInfo exists
-            CreationFlow()
+            StudentProfileCreationFlow()
         } else {
             // Show HomePage if StudentInfo exists
             HomePage()
@@ -23,5 +23,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(GlobalStudentState()) // Inject GlobalStudentState for preview
+        .environmentObject(GlobalStudentDataState())  // Inject GlobalStudentState for preview
 }

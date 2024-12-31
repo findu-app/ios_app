@@ -1,5 +1,5 @@
 //
-//  SizeRigorInputView.swift
+//  SizeRigorEntryView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct SizeRigorInputView: View {
-    @Binding var studentPreferredSize: String
-    @Binding var studentRigor: String
+struct SizeRigorEntryView: View {
+    @Binding var preferredSize: String
+    @Binding var rigor: String
 
     var body: some View {
         ScrollView {
@@ -19,7 +19,7 @@ struct SizeRigorInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentPreferredSize,
+                        selectedOption: $preferredSize,
                         options: PreferredSize.allCases.map { $0.rawValue })
                 }
                 VStack(alignment: .center, spacing: 24) {
@@ -27,7 +27,7 @@ struct SizeRigorInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentRigor,
+                        selectedOption: $rigor,
                         options: Rigor.allCases.map { $0.rawValue })
                 }
             }.padding(.horizontal, 1).padding(.bottom, 64)

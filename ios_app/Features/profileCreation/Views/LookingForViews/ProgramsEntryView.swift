@@ -1,5 +1,5 @@
 //
-//  ProgramsInputView.swift
+//  ProgramsEntryView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct ProgramsInputView: View {
-    @Binding var studentSpecialPrograms: String
-    @Binding var studentGreekLife: String
-    @Binding var studentResearch: String
+struct ProgramsEntryView: View {
+    @Binding var specialPrograms: String
+    @Binding var greekLifeInterest: String
+    @Binding var researchInterest: String
 
     var body: some View {
         ScrollView {
@@ -20,7 +20,7 @@ struct ProgramsInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentSpecialPrograms,
+                        selectedOption: $specialPrograms,
                         options: ["Yes", "No"])
                 }
                 VStack(alignment: .center, spacing: 24) {
@@ -28,7 +28,7 @@ struct ProgramsInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentGreekLife,
+                        selectedOption: $greekLifeInterest,
                         options: ["Yes", "No"])
                 }
                 VStack(alignment: .center, spacing: 24) {
@@ -36,7 +36,7 @@ struct ProgramsInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentResearch,
+                        selectedOption: $researchInterest,
                         options: ["Yes", "No"])
                 }
             }.padding(.horizontal, 1).padding(.bottom, 64)

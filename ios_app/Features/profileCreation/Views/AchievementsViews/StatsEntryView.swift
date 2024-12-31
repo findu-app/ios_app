@@ -1,5 +1,5 @@
 //
-//  StatsInputView.swift
+//  StatsEntryView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,27 +7,32 @@
 
 import SwiftUI
 
-struct StatsInputView: View {
-    @Binding var studentGPA: String
-    @Binding var studentACT: String
-    @Binding var studentSAT: String
+struct StatsEntryView: View {
+    @Binding var gpa: String
+    @Binding var actScore: String
+    @Binding var satScore: String
     @Binding var isACTNA: Bool
     @Binding var isSATNA: Bool
-    
+
     var body: some View {
         VStack(alignment: .center, spacing: 36) {
             // GPA Input
             VStack(alignment: .center, spacing: 24) {
                 Text("What’s your GPA?").centeredTitleTextStyle()
-                NumberField(userInput: $studentGPA, keyboardType: .decimalPad, maxLength: 4, placeholder: "e.g., 3.50")
+                NumberTextField(
+                    userInput: $gpa, keyboardType: .decimalPad, maxLength: 4,
+                    placeholder: "e.g., 3.50")
             }
-            
+
             // ACT Input with N/A Toggle
             VStack(alignment: .center, spacing: 12) {
                 Text("What’s your ACT score?").centeredTitleTextStyle()
-                NumberField(userInput: $studentACT, keyboardType: .numberPad, maxLength: 2, placeholder: "e.g., 24")
-                    .disabled(isACTNA) // Disable input when N/A is selected
-                
+                NumberTextField(
+                    userInput: $actScore, keyboardType: .numberPad,
+                    maxLength: 2, placeholder: "e.g., 24"
+                )
+                .disabled(isACTNA)  // Disable input when N/A is selected
+
                 Toggle(isOn: $isACTNA.animation()) {
                     Text("I haven't taken the test")
                         .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
@@ -35,17 +40,20 @@ struct StatsInputView: View {
                 .toggleStyle(SwitchToggleStyle(tint: Color("Primary")))
                 .onChange(of: isACTNA) { isNA in
                     if isNA {
-                        studentACT = "" // Clear ACT input when N/A is selected
+                        actScore = ""  // Clear ACT input when N/A is selected
                     }
                 }
             }
-            
+
             // SAT Input with N/A Toggle
             VStack(alignment: .center, spacing: 12) {
                 Text("What’s your SAT score?").centeredTitleTextStyle()
-                NumberField(userInput: $studentSAT, keyboardType: .numberPad, maxLength: 4, placeholder: "e.g., 1200")
-                    .disabled(isSATNA) // Disable input when N/A is selected
-                
+                NumberTextField(
+                    userInput: $satScore, keyboardType: .numberPad,
+                    maxLength: 4, placeholder: "e.g., 1200"
+                )
+                .disabled(isSATNA)  // Disable input when N/A is selected
+
                 Toggle(isOn: $isSATNA.animation()) {
                     Text("I haven't taken the test")
                         .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
@@ -53,7 +61,7 @@ struct StatsInputView: View {
                 .toggleStyle(SwitchToggleStyle(tint: Color("Primary")))
                 .onChange(of: isSATNA) { isNA in
                     if isNA {
-                        studentSAT = "" // Clear SAT input when N/A is selected
+                        satScore = ""  // Clear SAT input when N/A is selected
                     }
                 }
             }
@@ -63,10 +71,10 @@ struct StatsInputView: View {
 }
 
 #Preview {
-    StatsInputView(
-        studentGPA: .constant(""),
-        studentACT: .constant(""),
-        studentSAT: .constant(""),
+    StatsEntryView(
+        gpa: .constant(""),
+        actScore: .constant(""),
+        satScore: .constant(""),
         isACTNA: .constant(false),
         isSATNA: .constant(false)
     )

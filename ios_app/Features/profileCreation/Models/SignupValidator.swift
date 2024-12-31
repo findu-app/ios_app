@@ -14,29 +14,29 @@ struct SignupValidator {
     ///   - substepIndex: The index of the current substep within the section.
     ///   - data: The user input data.
     /// - Returns: `true` if the step is valid, otherwise `false`.
-    func validate(section: String, substepIndex: Int, data: CreationFlowData)
+    func validate(section: String, substepIndex: Int, data: StudentProfileData)
         -> Bool
     {
         switch section {
         case "About Me":
             switch substepIndex {
             case 0:  // NameGenderInputView
-                return !data.studentName.isEmpty && !data.studentGender.isEmpty
+                return !data.name.isEmpty && !data.gender.isEmpty
             case 1:  // WelcomeUserView
                 return true  // No validation required for WelcomeUserView
             case 2:  // ContactInputView
-                return data.studentPhone.count == 10
-                    && !data.studentContactMethod.isEmpty
+                return data.phone.count == 10
+                    && !data.preferredContactMethod.isEmpty
             case 3:  // AddressInputView
-                return !data.studentAddress.isEmpty
+                return !data.address.isEmpty
             case 4:  // HSInputView
-                return !data.studentHSName.isEmpty
-                    && !data.studentHSAddress.isEmpty
+                return !data.highSchoolName.isEmpty
+                    && !data.highSchoolAddress.isEmpty
             case 5:  // HSGradYearInputView
-                return !data.studentHSGradYear.isEmpty
+                return !data.graduationYear.isEmpty
             case 6:  // HouseholdInputView
-                return !data.studentHHIncome.isEmpty
-                    && !data.studentAidNeed.isEmpty
+                return !data.householdIncome.isEmpty
+                    && !data.financialAidNeed.isEmpty
             default:
                 return true
             }
@@ -47,14 +47,14 @@ struct SignupValidator {
             case 1:  // StatsInputView
                 return validateStatsInput(data: data)
             case 2:  // ClassRankInputView
-                return !data.studentClassRank.isEmpty
-                    && !data.studentAPIB.isEmpty
+                return !data.classRank.isEmpty
+                    && !data.numAPClass.isEmpty
             case 3:  // ActivitiesInputView
-                return data.studentActivities.count >= 3
+                return data.activities.count >= 3
             case 4:  // HobbiesInputView
-                return data.studentHobbies.count >= 3
+                return data.hobbies.count >= 3
             case 5:  // VolunteerInputView
-                return !data.studentVolunteerHours.isEmpty
+                return !data.volunteerHours.isEmpty
             default:
                 return true
             }
@@ -63,19 +63,19 @@ struct SignupValidator {
             case 0:  // LookingUserView
                 return true  // No validation required
             case 1:  // MajorInputView
-                return data.studentMajors.count >= 3
+                return data.majors.count >= 3
             case 2:  // HomeSettingInputView
-                return !data.studentPreferredDistance.isEmpty
-                    && !data.studentPreferredSetting.isEmpty
+                return !data.distanceFromHome.isEmpty
+                    && !data.preferredSetting.isEmpty
             case 3:  // SizeRigorInputView
-                return !data.studentPreferredSize.isEmpty
-                    && !data.studentRigor.isEmpty
+                return !data.preferredSize.isEmpty
+                    && !data.rigor.isEmpty
             case 4:  // CampusInputView
-                return data.studentCampusCulture.count >= 3
+                return data.campusCulturePreferences.count >= 3
             case 5:  // ProgramsInputView
-                return !data.studentSpecialPrograms.isEmpty
-                    && !data.studentGreekLife.isEmpty
-                    && !data.studentResearch.isEmpty
+                return !data.specialPrograms.isEmpty
+                    && !data.greekLifeInterest.isEmpty
+                    && !data.researchInterest.isEmpty
             case 6:  // FinalUserView
                 return true  // No validation required
             default:
@@ -85,18 +85,18 @@ struct SignupValidator {
             return true
         }
     }
-    
+
     /// Validates the StatsInputView fields for GPA, ACT, and SAT.
     /// - Parameter data: The user input data.
     /// - Returns: `true` if the stats input is valid, otherwise `false`.
-    private func validateStatsInput(data: CreationFlowData) -> Bool {
+    private func validateStatsInput(data: StudentProfileData) -> Bool {
         let isACTValid =
             data.isACTNA
-            || (!data.studentACT.isEmpty && Int(data.studentACT) != nil)
+            || (!data.actScore.isEmpty && Int(data.actScore) != nil)
         let isSATValid =
             data.isSATNA
-            || (!data.studentSAT.isEmpty && Int(data.studentSAT) != nil)
-        return !data.studentGPA.isEmpty && Double(data.studentGPA) != nil
+            || (!data.satScore.isEmpty && Int(data.satScore) != nil)
+        return !data.gpa.isEmpty && Double(data.gpa) != nil
             && isACTValid && isSATValid
     }
 }

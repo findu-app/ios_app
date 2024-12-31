@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct StringField: View {
+struct StringTextField: View {
     @Binding var userInput: String
     var placeholder: String
     @FocusState private var isFocused: Bool
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             TextField(placeholder, text: $userInput)
@@ -20,7 +20,9 @@ struct StringField: View {
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color("SurfaceContainer"))
-                        .stroke(isFocused ? Color("OnSurface") : Color("Border"), lineWidth: 1)
+                        .stroke(
+                            isFocused ? Color("OnSurface") : Color("Border"),
+                            lineWidth: 1)
                 )
                 .textInputAutocapitalization(.words)
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
@@ -36,9 +38,9 @@ struct StringField: View {
                 }
         }
     }
-    
+
 }
 
 #Preview {
-    StringField(userInput: .constant(""), placeholder: "Wow")
+    StringTextField(userInput: .constant(""), placeholder: "Wow")
 }

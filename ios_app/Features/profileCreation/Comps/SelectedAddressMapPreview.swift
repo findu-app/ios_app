@@ -1,24 +1,24 @@
 //
-//  MapPreview.swift
+//  SelectedAddressMapPreview.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/28/24.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
-struct MapPreview: View {
+struct SelectedAddressMapPreview: View {
     var mapRegion: MKCoordinateRegion
     var selectedAddress: String?
     var iconName: String?
 
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
-            Text("Map Preview")
+            Text("Does this look right?")
                 .font(Font.custom("Plus Jakarta Sans Medium", size: 20))
                 .foregroundColor(Color("OnSurface"))
-            
+
             Map(coordinateRegion: .constant(mapRegion))
                 .frame(height: 200)
                 .cornerRadius(10)
@@ -50,16 +50,17 @@ struct MapPreview: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color("Border"), lineWidth: 1)
                 )
-      
+
             }
         }
     }
 }
 
 #Preview {
-    MapPreview(
+    SelectedAddressMapPreview(
         mapRegion: MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+            center: CLLocationCoordinate2D(
+                latitude: 37.7749, longitude: -122.4194),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         ),
         selectedAddress: "123 Main St, San Francisco, CA",

@@ -1,5 +1,5 @@
 //
-//  HomeSettingInputView.swift
+//  HomePreferencesEntryView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct HomeSettingInputView: View {
-    @Binding var studentPreferredDistance: String
-    @Binding var studentPreferredSetting: String
+struct HomePreferencesEntryView: View {
+    @Binding var distanceFromHome: String
+    @Binding var preferredSetting: String
 
     var body: some View {
         ScrollView {
@@ -19,7 +19,7 @@ struct HomeSettingInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentPreferredDistance,
+                        selectedOption: $distanceFromHome,
                         options: PreferredDistance.allCases.map { $0.rawValue })
                 }
                 VStack(alignment: .center, spacing: 24) {
@@ -27,7 +27,7 @@ struct HomeSettingInputView: View {
                         .centeredTitleTextStyle()
 
                     SingleSelectBtns(
-                        selectedOption: $studentPreferredSetting,
+                        selectedOption: $preferredSetting,
                         options: PreferredSetting.allCases.map { $0.rawValue })
                 }
             }.padding(.horizontal, 1).padding(.bottom, 64)
