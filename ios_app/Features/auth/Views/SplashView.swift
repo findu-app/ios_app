@@ -11,10 +11,7 @@ struct SplashView: View {
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        ZStack {
-            Color("Surface")
-                           .ignoresSafeArea()
-            
+        ZStack {            
             Image(colorScheme == .dark ? "finduLogoFull_dark" : "finduLogoFull_light")
         }
     }

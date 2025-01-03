@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct ios_app: App {
@@ -13,8 +14,17 @@ struct ios_app: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppView()
+                .onOpenURL { url in
+                          GIDSignIn.sharedInstance.handle(url)
+                        }
+                .onAppear {
+                          GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                          }
+                        }
+          ContentView()
                 .environmentObject(globalStudentState)
+
         }
     }
 }
