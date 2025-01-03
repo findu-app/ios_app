@@ -10,6 +10,8 @@ import GoogleSignIn
 
 @main
 struct ios_app: App {
+    @StateObject private var globalStudentState = GlobalStudentDataState()
+
     var body: some Scene {
         WindowGroup {
             AppView()
@@ -20,6 +22,9 @@ struct ios_app: App {
                           GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                           }
                         }
+          ContentView()
+                .environmentObject(globalStudentState)
+
         }
     }
 }
