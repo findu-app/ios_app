@@ -14,7 +14,8 @@ struct ios_app: App {
 
     var body: some Scene {
         WindowGroup {
-            AppView()
+            ContentView()
+                .environmentObject(globalStudentState)
                 .onOpenURL { url in
                           GIDSignIn.sharedInstance.handle(url)
                         }
@@ -22,9 +23,6 @@ struct ios_app: App {
                           GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                           }
                         }
-          ContentView()
-                .environmentObject(globalStudentState)
-
         }
     }
 }
