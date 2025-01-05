@@ -6,29 +6,30 @@
 //
 
 import SwiftUI
+import Supabase
 
 struct StudentProfileCreationFlow: View {
     @State private var studentData = StudentProfileData()
     @State private var currentSectionIndex: Int = 0
     @State private var currentStepIndex: Int = 0
-
+    
     @EnvironmentObject var globalStudentState: GlobalStudentDataState  // Access GlobalStudentState
-
+    
     private let validator = SignupValidator()
     @State private var validationError: String?
-
+    
     private var steps: [(section: String, views: [() -> AnyView])] {
         CreationFlowSteps.steps(studentData: $studentData)
     }
-
+    
     private var currentSection: String {
         steps[currentSectionIndex].section
     }
-
+    
     private var currentSteps: [() -> AnyView] {
         steps[currentSectionIndex].views
     }
-
+    
     private var isStepValid: Bool {
         validator.validate(
             section: currentSection,
@@ -36,12 +37,12 @@ struct StudentProfileCreationFlow: View {
             data: studentData
         )
     }
-
+    
     private var isLastStep: Bool {
         currentSectionIndex == steps.count - 1
-            && currentStepIndex == currentSteps.count - 1
+        && currentStepIndex == currentSteps.count - 1
     }
-
+    
     var body: some View {
         ZStack {
             // Main Content
@@ -52,7 +53,7 @@ struct StudentProfileCreationFlow: View {
                     currentStep: completedSteps,
                     currentSection: currentSection
                 )
-
+                
                 // Render current step
                 if currentStepIndex < currentSteps.count {
                     currentSteps[currentStepIndex]()
@@ -61,14 +62,18 @@ struct StudentProfileCreationFlow: View {
                         .font(.system(size: 24))
                         .foregroundColor(Color("OnSurface"))
                 }
-
+                
                 Spacer()  // Push content up
             }
-
+            
             // Continue Button
             VStack {
                 Spacer()  // Push button to the bottom
-                Button(action: handleContinue) {
+                Button(action: {
+                        Task {
+                            await handleContinue()
+                        }
+                    }) {
                     Text(isLastStep ? "Complete Profile" : "Continue")
                         .font(
                             Font.custom("Plus Jakarta Sans SemiBold", size: 16)
@@ -91,18 +96,18 @@ struct StudentProfileCreationFlow: View {
         .padding(.horizontal, 16)
         .background(Color("Surface"))
     }
-
+    
     // Helpers
     private var totalSteps: Int {
         steps.flatMap { $0.views }.count
     }
-
+    
     private var completedSteps: Int {
         steps.prefix(currentSectionIndex).flatMap { $0.views }.count
-            + currentStepIndex
+        + currentStepIndex
     }
-
-    private func handleContinue() {
+    
+    private func handleContinue() async {
         if isStepValid {
             validationError = nil
             if currentStepIndex < currentSteps.count - 1 {
@@ -114,12 +119,32 @@ struct StudentProfileCreationFlow: View {
                 currentStepIndex = 0
             } else {
                 // If on the last step, save the student profile
-                let studentInfo = studentData.toStudentInfo()  // Transform the data
-                globalStudentState.saveStudentInfo(from: studentInfo)  // Save globally
+                let studentInfo = studentData.toStudentInfo() // Transform the data
+                globalStudentState.saveStudentInfo(from: studentInfo) // Save globally
+                
+                // Upload to Supabase
+                do {
+                    try await uploadStudentInfoToSupabase(studentInfo)
+                } catch {
+                    validationError = "Failed to save student info. Please try again."
+                    print("Error uploading student info: \(error)")
+                }
             }
         } else {
             validationError = "Please complete this step before continuing."
         }
+    }
+    
+    private func uploadStudentInfoToSupabase(_ studentInfo: StudentInfo) async throws {
+        let client = supabase
+        let table = client.from("students")
+        
+        let data = studentInfo.toDatabaseModel()
+        
+        let response = try await table.insert([data]).select().execute()
+        
+
+        print("Inserted student data:", response.data ?? "No data returned")
     }
 }
 

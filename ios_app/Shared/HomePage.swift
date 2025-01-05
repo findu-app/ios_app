@@ -21,7 +21,7 @@ struct HomePage: View {
 
             List {
                 Text("Phone: \(globalStudentState.studentInfo?.phone ?? "N/A")")
-                Text("Gender: \(globalStudentState.studentInfo?.gender.rawValue ?? "N/A")")
+                Text("Gender: \(globalStudentState.studentInfo?.gender ?? "N/A")")
                 Text("High School: \(globalStudentState.studentInfo?.highSchoolName ?? "N/A")")
                 // Add more details as needed
             }

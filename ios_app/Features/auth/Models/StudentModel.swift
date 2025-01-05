@@ -19,3 +19,5 @@ struct StudentModel: Identifiable, Codable {
         self.studentID = studentID
     }
 }
+
+

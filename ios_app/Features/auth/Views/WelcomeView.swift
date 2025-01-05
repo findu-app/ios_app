@@ -23,7 +23,7 @@ struct WelcomeView: View {
                 
                 Text("Welcome to")
                     .font(Font.custom("Plus Jakarta Sans Light", size: 32.0))
-                    .foregroundColor(Color("secondary"))
+                    .foregroundColor(Color("Secondary"))
                 
                 Image(colorScheme == .dark ? "finduLogoFull_dark" : "finduLogoFull_light")
                 

@@ -194,89 +194,36 @@ struct CreationFlowSteps {
 extension StudentProfileData {
     func toStudentInfo() -> StudentInfo {
         return StudentInfo(
-            // About You
             name: self.name.trimmingCharacters(in: .whitespacesAndNewlines),
             phone: self.phone.trimmingCharacters(in: .whitespacesAndNewlines),
-            preferredContactMethod: ContactMethod(
-                rawValue: self.preferredContactMethod.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
-            address: self.address.trimmingCharacters(
-                in: .whitespacesAndNewlines),
-            highSchoolName: self.highSchoolName.trimmingCharacters(
-                in: .whitespacesAndNewlines),
-            highSchoolAddress: self.highSchoolAddress.trimmingCharacters(
-                in: .whitespacesAndNewlines),
-            graduationYear: GraduationYear(
-                rawValue: Int(
-                    self.graduationYear.trimmingCharacters(
-                        in: .whitespacesAndNewlines))!)!,
-            gender: Gender(
-                rawValue: self.gender.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
-            householdIncome: IncomeRange(
-                rawValue: self.householdIncome.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
+            preferredContactMethod: self.preferredContactMethod.trimmingCharacters(in: .whitespacesAndNewlines),
+            address: self.address.trimmingCharacters(in: .whitespacesAndNewlines),
+            highSchoolName: self.highSchoolName.trimmingCharacters(in: .whitespacesAndNewlines),
+            highSchoolAddress: self.highSchoolAddress.trimmingCharacters(in: .whitespacesAndNewlines),
+            graduationYear: Int(self.graduationYear.trimmingCharacters(in: .whitespacesAndNewlines))!,
+            gender: self.gender.trimmingCharacters(in: .whitespacesAndNewlines),
+            householdIncome: self.householdIncome.trimmingCharacters(in: .whitespacesAndNewlines),
             financialAidNeed: self.financialAidNeed == "true",
-
-            // Achievements
             gpa: Double(self.gpa)!,
-            actScore: isACTNA
-                ? nil
-                : Int(
-                    self.actScore.trimmingCharacters(
-                        in: .whitespacesAndNewlines)),
-            satScore: isSATNA
-                ? nil
-                : Int(
-                    self.satScore.trimmingCharacters(
-                        in: .whitespacesAndNewlines)),
-            classRank: ClassRank(
-                rawValue: self.classRank.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
+            actScore: isACTNA ? nil : Int(self.actScore.trimmingCharacters(in: .whitespacesAndNewlines)),
+            satScore: isSATNA ? nil : Int(self.satScore.trimmingCharacters(in: .whitespacesAndNewlines)),
+            classRank: self.classRank.trimmingCharacters(in: .whitespacesAndNewlines),
             numAPClass: Int(self.numAPClass)!,
-            activities: self.activities.compactMap {
-                Activity(
-                    rawValue: $0.trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            },
-            hobbies: self.hobbies.compactMap {
-                Hobby(
-                    rawValue: $0.trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            },
-            volunteerHours: VolunteerHours(
-                rawValue: self.volunteerHours.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
-
-            // Looking For
-            majors: self.majors.compactMap {
-                Major(
-                    rawValue: $0.trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            },
-            preferredSize: PreferredSize(
-                rawValue: self.preferredSize.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
-            distanceFromHome: PreferredDistance(
-                rawValue: self.distanceFromHome.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
-            preferredSetting: self.preferredSetting.split(separator: ",")
-                .compactMap {
-                    PreferredSetting(
-                        rawValue: $0.trimmingCharacters(
-                            in: .whitespacesAndNewlines))
-                },
-            rigor: Rigor(
-                rawValue: self.rigor.trimmingCharacters(
-                    in: .whitespacesAndNewlines))!,
+            activities: self.activities.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) },
+            hobbies: self.hobbies.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) },
+            volunteerHours: self.volunteerHours.trimmingCharacters(in: .whitespacesAndNewlines),
+            majors: self.majors.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) },
+            preferredSize: self.preferredSize.trimmingCharacters(in: .whitespacesAndNewlines),
+            distanceFromHome: self.distanceFromHome.trimmingCharacters(in: .whitespacesAndNewlines),
+            preferredSetting: self.preferredSetting.trimmingCharacters(in: .whitespacesAndNewlines),
+            rigor: self.rigor.trimmingCharacters(in: .whitespacesAndNewlines),
+            campusCulturePreferences: self.campusCulturePreferences.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) },
             specialPrograms: Bool(self.specialPrograms) ?? false,
-            campusCulturePreferences: self.campusCulturePreferences.compactMap {
-                CampusCulture(
-                    rawValue: $0.trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            },
             greekLifeInterest: Bool(self.greekLifeInterest) ?? false,
             researchInterest: Bool(self.researchInterest) ?? false
         )
     }
 }
+
+
+

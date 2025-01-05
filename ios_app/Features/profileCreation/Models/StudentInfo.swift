@@ -8,38 +8,97 @@
 import Foundation
 
 struct StudentInfo: Codable {
-    // MARK: - About You
-    var name: String
-    var phone: String
-    var preferredContactMethod: ContactMethod
-    var address: String
-    var highSchoolName: String
-    var highSchoolAddress: String
-    var graduationYear: GraduationYear
-    var gender: Gender
-    var householdIncome: IncomeRange
-    var financialAidNeed: Bool
+    let name: String
+    let phone: String
+    let preferredContactMethod: String
+    let address: String
+    let highSchoolName: String
+    let highSchoolAddress: String
+    let graduationYear: Int
+    let gender: String
+    let householdIncome: String
+    let financialAidNeed: Bool
+    let gpa: Double
+    let actScore: Int?
+    let satScore: Int?
+    let classRank: String
+    let numAPClass: Int
+    let activities: [String]
+    let hobbies: [String]
+    let volunteerHours: String
+    let majors: [String]
+    let preferredSize: String
+    let distanceFromHome: String
+    let preferredSetting: String
+    let rigor: String
+    let campusCulturePreferences: [String]
+    let specialPrograms: Bool
+    let greekLifeInterest: Bool
+    let researchInterest: Bool
 
-    // MARK: - Achievements
-    var gpa: Double
-    var actScore: Int?
-    var satScore: Int?
-    var classRank: ClassRank
-    var numAPClass: Int
-    var activities: [Activity]
-    var hobbies: [Hobby]
-    var volunteerHours: VolunteerHours
+    enum CodingKeys: String, CodingKey {
+        case name
+        case phone
+        case preferredContactMethod = "preferred_contact_method"
+        case address
+        case highSchoolName = "high_school_name"
+        case highSchoolAddress = "high_school_address"
+        case graduationYear = "graduation_year"
+        case gender
+        case householdIncome = "household_income"
+        case financialAidNeed = "financial_aid_need"
+        case gpa
+        case actScore = "act_score"
+        case satScore = "sat_score"
+        case classRank = "class_rank"
+        case numAPClass = "num_ap_classes"
+        case activities
+        case hobbies
+        case volunteerHours = "volunteer_hours"
+        case majors
+        case preferredSize = "preferred_size"
+        case distanceFromHome = "distance_from_home"
+        case preferredSetting = "preferred_setting"
+        case rigor
+        case campusCulturePreferences = "campus_culture_preferences"
+        case specialPrograms = "special_programs"
+        case greekLifeInterest = "greek_life_interest"
+        case researchInterest = "research_interest"
+    }
+}
 
-    // MARK: - Looking For
-    var majors: [Major]
-    var preferredSize: PreferredSize
-    var distanceFromHome: PreferredDistance
-    var preferredSetting: [PreferredSetting]
-    var rigor: Rigor
-    var specialPrograms: Bool
-    var campusCulturePreferences: [CampusCulture]
-    var greekLifeInterest: Bool
-    var researchInterest: Bool
+extension StudentInfo {
+    func toDatabaseModel() -> StudentInfoDatabaseModel {
+        return StudentInfoDatabaseModel(
+            name: name,
+            phone: phone,
+            preferred_contact_method: preferredContactMethod,
+            address: address,
+            high_school_name: highSchoolName,
+            high_school_address: highSchoolAddress,
+            graduation_year: String(graduationYear),
+            gender: gender,
+            household_income: householdIncome,
+            financial_aid_need: financialAidNeed,
+            gpa: gpa,
+            act_score: actScore,
+            sat_score: satScore,
+            class_rank: classRank,
+            num_ap_classes: numAPClass,
+            activities: activities.map { $0 },
+            hobbies: hobbies.map { $0 },
+            volunteer_hours: volunteerHours,
+            majors: majors.map { $0 },
+            distance_from_home: distanceFromHome,
+            preferred_setting: preferredSetting,
+            preferred_size: preferredSize,
+            rigor: rigor,
+            campus_culture_preferences: campusCulturePreferences.map { $0 },
+            special_programs: specialPrograms,
+            greek_life_interest: greekLifeInterest,
+            research_interest: researchInterest
+        )
+    }
 }
 
 // MARK: - Supporting Enums
