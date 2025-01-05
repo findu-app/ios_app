@@ -1,45 +1,60 @@
+//
+//  CollegeAPI.swift
+//  ios_app
+//
+//  Created by Wilson Overfield on 1/4/25.
+//
+
+
 import Foundation
 
 class CollegeAPI {
     static let shared = CollegeAPI()
     private let baseURL = "https://api.data.gov/ed/collegescorecard/v1/schools"
 
-    func fetchSchools(query: String, completion: @escaping (Result<[School], Error>) -> Void) {
+    private init() {}
+
+    func fetchSchools(query: String?, completion: @escaping (Result<[School], Error>) -> Void) {
         guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"] else {
             fatalError("API key is missing.")
         }
 
-        let queryItems = [
+        var components = URLComponents(string: baseURL)!
+        components.queryItems = [
             URLQueryItem(name: "api_key", value: apiKey),
-            URLQueryItem(name: "school.name", value: query),
-            URLQueryItem(name: "fields", value: "id,school.name,school.city,school.state,latest.student.size")
+            URLQueryItem(name: "fields", value: "id,school.name,school.city,school.state,latest.student.size,latest.admissions.sat_scores.average.overall,latest.cost.tuition.in_state,latest.cost.attendance.academic_year,latest.cost.attendance.program_year")
         ]
 
-        var urlComponents = URLComponents(string: baseURL)!
-        urlComponents.queryItems = queryItems
+        // Add the search query only if provided
+        if let query = query {
+            components.queryItems?.append(URLQueryItem(name: "school.name", value: query))
+        }
 
-        guard let url = urlComponents.url else {
-            completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
+        guard let url = components.url else {
+            completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
             }
 
             guard let data = data else {
-                completion(.failure(NSError(domain: "No Data", code: -1, userInfo: nil)))
+                completion(.failure(NSError(domain: "No data returned", code: 0, userInfo: nil)))
                 return
             }
 
             do {
-                let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)
-                completion(.success(apiResponse.results))
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(SchoolsResponse.self, from: data)
+                completion(.success(response.results))
             } catch {
                 completion(.failure(error))
             }
-        }.resume()
+        }
+
+        task.resume()
     }
 }

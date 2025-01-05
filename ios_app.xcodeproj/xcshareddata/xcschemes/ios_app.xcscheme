@@ -50,6 +50,13 @@
             ReferencedContainer = "container:ios_app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "API_KEY"
+            value = "4z0Wuc1OyLvw3OLfYZKtmXhiqrjM5V1AUgYhmweH"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
