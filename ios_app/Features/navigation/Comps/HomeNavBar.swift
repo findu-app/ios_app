@@ -4,6 +4,7 @@
 //
 //  Created by Wilson Overfield on 1/6/25.
 //
+
 import SwiftUI
 
 struct HomeNavBar: View {
@@ -14,39 +15,27 @@ struct HomeNavBar: View {
             .frame(height: 1)
             .background(Color.gray.opacity(0.5))
         HStack {
-            VStack {
-                Image(systemName: "heart")
-                    .font(.title)
-                Text("Saved")
-                    .font(Font.custom("Plus Jakarta Sans Regular", size: 9))
-            }
-            .frame(maxWidth: .infinity)
-            .foregroundColor(selectedTab == .saved ? Color("primary") : Color("onSurface"))
-            .onTapGesture {
+            HomeNavBarIconButton(
+                icon: "heart",
+                label: "Saved",
+                isSelected: selectedTab == .saved
+            ) {
                 selectedTab = .saved
             }
 
-            VStack {
-                Image(systemName: "safari.fill")
-                    .font(.title)
-                Text("Explore")
-                    .font(Font.custom("Plus Jakarta Sans Regular", size: 9))
-            }
-            .frame(maxWidth: .infinity)
-            .foregroundColor(selectedTab == .explore ? Color("primary") : Color("onSurface"))
-            .onTapGesture {
+            HomeNavBarIconButton(
+                icon: "safari.fill",
+                label: "Explore",
+                isSelected: selectedTab == .explore
+            ) {
                 selectedTab = .explore
             }
 
-            VStack {
-                Image(systemName: "gear")
-                    .font(.title)
-                Text("Settings")
-                    .font(Font.custom("Plus Jakarta Sans Regular", size: 9))
-            }
-            .frame(maxWidth: .infinity)
-            .foregroundColor(selectedTab == .settings ? Color("primary") : Color("onSurface"))
-            .onTapGesture {
+            HomeNavBarIconButton(
+                icon: "gear",
+                label: "Settings",
+                isSelected: selectedTab == .settings
+            ) {
                 selectedTab = .settings
             }
         }
