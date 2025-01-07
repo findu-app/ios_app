@@ -8,19 +8,38 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var selectedTab: Tab = .explore
+
     var body: some View {
         VStack(spacing: 0) {
             HomeHeader()
-            
+
             Spacer()
-            
+
+            Group {
+                switch selectedTab {
+                case .saved:
+                    SavedView()
+                case .explore:
+                    ExploreView()
+                case .settings:
+                    SettingsView()
+                }
+            }
+
             Spacer()
-                        
-            HomeNavBar()
+
+            HomeNavBar(selectedTab: $selectedTab)
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(Color("surface"))
     }
+}
+
+enum Tab {
+    case saved
+    case explore
+    case settings
 }
 
 #Preview {
