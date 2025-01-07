@@ -9,22 +9,32 @@
 import SwiftUI
 
 struct HomeHeader: View {
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         HStack {
-            Text("Find")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-            Text("U")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.red)
+            Image(colorScheme == .dark ? "finduLogoFull_dark" : "finduLogoFull_light")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 95)
+
             Spacer()
+            
             Image(systemName: "magnifyingglass")
                 .font(.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color("onSurface"))
         }
         .padding(.horizontal)
-        .padding(.top, 16)
+        .padding(.bottom)
+        .background(Color("surface"))
+        
+        Divider()
+            .frame(height: 1)
+            .background(Color.gray.opacity(0.5))
+
     }
+}
+
+#Preview {
+    HomeHeader()
 }
