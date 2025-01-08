@@ -10,14 +10,13 @@ struct SchoolsResponse: Decodable {
     let results: [School]
 }
 
-struct School: Decodable, Identifiable {
+struct School: Decodable, Identifiable, Equatable {
     let id: Int
     let name: String
-    let city: String?
-    let state: String?
+    let city: String
+    let state: String
     let size: Int?
     let averageSAT: Float?
-//    let inStateTuition: Int?
     let coaAcademicYear: Int?
 
     enum CodingKeys: String, CodingKey {
@@ -27,7 +26,6 @@ struct School: Decodable, Identifiable {
         case state = "school.state"
         case size = "latest.student.size"
         case averageSAT = "latest.admissions.sat_scores.average.overall"
-//        case inStateTuition = "latest.cost.tuition.in_state"
         case coaAcademicYear = "latest.cost.attendance.academic_year"
     }
 }

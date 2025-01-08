@@ -86,7 +86,7 @@ struct SchoolsListView: View {
                 } else {
                     ScrollView {
                         ForEach(schools, id: \.id) { school in
-                            SchoolCardView(school: school, student: mockStudentInfo)
+                            SchoolMainCardView(school: school, student: mockStudentInfo)
                                 .padding(.horizontal)
                                 .padding(.bottom, 8)
                         }
