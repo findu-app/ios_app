@@ -25,7 +25,6 @@ class CollegeAPI {
             URLQueryItem(name: "fields", value: "id,school.name,school.city,school.state,latest.student.size,latest.admissions.sat_scores.average.overall,latest.cost.tuition.in_state,latest.cost.attendance.academic_year,latest.cost.attendance.program_year")
         ]
 
-        // Add the search query only if provided
         if let query = query {
             components.queryItems?.append(URLQueryItem(name: "school.name", value: query))
         }

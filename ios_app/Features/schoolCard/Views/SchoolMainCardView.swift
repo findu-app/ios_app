@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SchoolCardView: View {
+struct SchoolMainCardView: View {
     let school: School
     let student: StudentInfo
     
@@ -77,11 +77,13 @@ struct SchoolCardView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(school.name)
                 .font(.headline)
-            if let city = school.city, let state = school.state {
-                Text("\(city), \(state)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
+            let city = school.city
+            let state = school.state
+            
+            Text("\(city), \(state)")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+            
             if let size = school.size {
                 Text("Student Size: \(size)")
                     .font(.subheadline)

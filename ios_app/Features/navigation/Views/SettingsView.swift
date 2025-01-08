@@ -1,5 +1,5 @@
 //
-//  SavedView.swift
+//  SettingsView.swift
 //  ios_app
 //
 //  Created by Wilson Overfield on 1/7/25.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct SavedView: View {
+struct SettingsView: View {
     var body: some View {
-        Text("Saved Content")
+        Text("Settings Content")
             .font(.largeTitle)
             .padding()
     }
 }
 
 #Preview {
-    SavedView()
+    SettingsView()
 }
