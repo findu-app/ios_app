@@ -1,5 +1,5 @@
 //
-//  CostSectionView.swift
+//  OutcomesSectionView.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 1/7/25.
@@ -7,28 +7,28 @@
 
 import SwiftUI
 
-struct CostSectionView: View {
+struct OutcomesSectionView: View {
     var matchScore: String
-    var fourYearDebt: String
-    var averageCost: String
+    var salaryAfterCollege: String
+    var studentsWhoReturn: String
     var quickStats: [[String: String]]
     var link: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Title section with match score
-            SectionTitle(title: "Cost", matchScore: matchScore)
+            SectionTitle(title: "Outcomes", matchScore: matchScore)
 
             // Debt and cost blocks
             VStack(alignment: .leading, spacing: 8) {
                 SectionBlock(
-                    title: "Average debt after 4 years",
-                    statistic: fourYearDebt,
+                    title: "Average salary out of college",
+                    statistic: salaryAfterCollege,
                     match: "N/A"
                 )
                 SectionBlock(
-                    title: "Average cost per year:",
-                    statistic: averageCost,
+                    title: "Student’s who return after year one",
+                    statistic: studentsWhoReturn,
                     match: "N/A"
                 )
             }
@@ -54,16 +54,13 @@ struct CostSectionView: View {
 }
 
 #Preview {
-    CostSectionView(
+    OutcomesSectionView(
         matchScore: "A+",
-        fourYearDebt: "$22,000",
-        averageCost: "$15,000",
+        salaryAfterCollege: "$60,000",
+        studentsWhoReturn: "88%",
         quickStats: [
             ["label": "In-state Tuition", "stat": "$10,000", "match": "High"],
-            [
-                "label": "Out-of-state Tuition", "stat": "$25,000",
-                "match": "Med",
-            ],
+            ["label": "Out-of-state Tuition", "stat": "$25,000", "match": "Med"]
         ],
         link: "https://example.com"
     )

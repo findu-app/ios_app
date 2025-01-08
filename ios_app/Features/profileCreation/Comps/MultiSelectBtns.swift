@@ -1,30 +1,32 @@
 //
-//  HighSchoolSuggestionsDrawer.swift
+//  MultiSelectBtns.swift
 //  ios_app
 //
 //  Created by Kenny Morales on 12/30/24.
 //
 
 import SwiftUI
+import WrappingHStack
 
 struct MultiSelectBtns: View {
     @Binding var selectedOptions: [String]  // Holds the selected options
     let options: [String]  // Available options
 
     var body: some View {
-        ScrollView {
-            WrappingHStack(horizontalSpacing: 10, verticalSpacing: 10) {
-                ForEach(options, id: \.self) { option in
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Select Options")
+                .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
+                .foregroundColor(Color("OnSurface"))
+
+            ScrollView {
+                WrappingHStack(options, id: \.self, spacing: .constant(8), lineSpacing: 8) { option in
                     Button(action: {
                         toggleSelection(for: option)
                     }) {
                         Text(option)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
-                            .font(
-                                Font.custom(
-                                    "Plus Jakarta Sans Medium", size: 12)
-                            )
+                            .font(Font.custom("Plus Jakarta Sans Medium", size: 12))
                             .background(
                                 selectedOptions.contains(option)
                                     ? Color("Primary").opacity(0.2)
@@ -35,9 +37,9 @@ struct MultiSelectBtns: View {
                                     ? Color("Primary")
                                     : Color("OnSurface")
                             )
-                            .cornerRadius(12)
+                            .cornerRadius(8)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: 8)
                                     .stroke(
                                         selectedOptions.contains(option)
                                             ? Color("Primary")
@@ -47,10 +49,11 @@ struct MultiSelectBtns: View {
                             )
                     }
                 }
+                .padding(.top, 12)
+                .padding(.horizontal, 1)
             }
-            .padding(.top, 48)
-            .padding(.bottom, 64)
         }
+        .padding()
     }
 
     /// Toggles the selection for a given option
@@ -68,6 +71,9 @@ struct MultiSelectBtns: View {
 #Preview {
     MultiSelectBtns(
         selectedOptions: .constant(["🏀   Basketball"]),
-        options: Activity.allCases.map { $0.rawValue }
+        options: [
+            "🏀   Basketball", "🎨   Art", "🎸   Music", "📚   Reading", "💻   Coding",
+            "🎮   Gaming", "🍳   Cooking", "🏋️‍♀️   Fitness", "🎤   Singing", "✈️   Travel"
+        ]
     )
 }
