@@ -17,57 +17,35 @@ struct ExploreCard: View {
         let id = UUID()
         let school: School
         var swipeDirection: SwipeDirection = .none
-        
     }
-    
+
     var model: Model
     var dragOffset: CGSize
     var isTopCard: Bool
     var isSecondCard: Bool
-    
+
     @State private var mapRegion: MKCoordinateRegion?
     @State private var isLoadingMap = true
-    
-    
-    // Fetch the map region using geocoding
-    private func fetchMapRegion(for location: String) {
-        LocationUtils.fetchCoordinates(for: location) { result in
-            switch result {
-            case .success(let coordinate):
-                DispatchQueue.main.async {
-                    self.mapRegion = MKCoordinateRegion(
-                        center: coordinate,
-                        span: MKCoordinateSpan(
-                            latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    )
-                }
-            case .failure(let error):
-                print(
-                    "Error fetching coordinates: \(error.localizedDescription)")
-            }
-        }
-    }
-
 
     var body: some View {
         ZStack {
             // Background Image
             if let region = mapRegion {
-                            // Apple Map background
-                            Map(coordinateRegion: .constant(region))
-                                .cornerRadius(20)
-                                .overlay(
-                                    LinearGradient(
-                                        colors: [Color.black.opacity(0.6), Color.clear],
-                                        startPoint: .bottom,
-                                        endPoint: .top
-                                    )
-                                )
-                        } else {
-                            // Placeholder while map is loading
-                            Color.gray
-                                .cornerRadius(20)
-                        }
+                // Apple Map background
+                Map(coordinateRegion: .constant(region))
+                    .cornerRadius(20)
+                    .overlay(
+                        LinearGradient(
+                            colors: [Color.black.opacity(0.6), Color.clear],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                    )
+            } else {
+                // Placeholder while map is loading
+                Color.gray
+                    .cornerRadius(20)
+            }
 
             // Gray blurred container
             VStack {
@@ -76,11 +54,11 @@ struct ExploreCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Tags
                     HStack(spacing: 8) {
-                        TagView(text: "Average ACT: \(model.school.averageSAT)", backgroundColor: Color.yellow)
+                        TagView(text: "Average ACT: \(model.school.act)", backgroundColor: Color.yellow)
                         TagView(text: "Public or Private?", backgroundColor: Color.green)
                     }
                     .padding(.top, 12)
-                    
+
                     HStack(spacing: 8) {
                         TagView(text: "Avg Aid: ", backgroundColor: Color.green)
                         TagView(text: "Avg Tuition: \(model.school.coaAcademicYear)", backgroundColor: Color.green)
@@ -106,10 +84,9 @@ struct ExploreCard: View {
 
                         Text("A+")
                             .font(Font.custom("Plus Jakarta Sans Bold", size: 32))
-                            .foregroundColor(Color(red: 2/255, green: 255/255, blue: 127/255))
+                            .foregroundColor(Color(red: 2 / 255, green: 255 / 255, blue: 127 / 255))
                             .frame(alignment: .trailing)
                     }
-
 
                     // Action Buttons
                     ActionButtons(
@@ -122,7 +99,7 @@ struct ExploreCard: View {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(
-                    BlurView(style: .regular, overlayColor: Color(red: 83/255, green: 83/255, blue: 83/255, opacity: 0.5)
+                    BlurView(style: .regular, overlayColor: Color(red: 83 / 255, green: 83 / 255, blue: 83 / 255, opacity: 0.5)
                     ))
                 .cornerRadius(20)
                 .padding(.horizontal, 16)
@@ -132,8 +109,14 @@ struct ExploreCard: View {
         .frame(width: 361, height: 616)
         .cornerRadius(20)
         .onAppear {
-            fetchMapRegion(for: "\(model.school.city), \(model.school.state)")
-                }
+            // Initialize the mapRegion dynamically
+            if let lat = model.school.latitude, let lon = model.school.longitude {
+                mapRegion = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)),
+                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                )
+            }
+        }
     }
 }
 
@@ -170,19 +153,5 @@ struct BlurView: UIViewRepresentable {
             overlayView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             uiView.contentView.addSubview(overlayView)
         }
-    }
-}
-
-struct ExploreCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ExploreCard(
-            model: ExploreCard.Model(
-                school: School(id: 1, name: "University of Nebraska-Lincoln", city: "Lincoln", state: "NE", size: 5000, averageSAT: 1200, coaAcademicYear: 2025)
-            ),
-            dragOffset: .zero,
-            isTopCard: true,
-            isSecondCard: false
-        )
-        .preferredColorScheme(.dark)
     }
 }

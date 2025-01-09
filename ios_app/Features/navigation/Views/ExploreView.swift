@@ -8,55 +8,55 @@
 import SwiftUI
 
 struct ExploreView: View {
+    @State private var schools: [School] = []  // Stores fetched schools
+    @State private var isLoading = false      // Indicates if data is being fetched
+    @State private var errorMessage: String?  // Stores any error messages
+
+    private func fetchSchools() {
+        isLoading = true
+        errorMessage = nil
+        schools = []
+
+        CollegeAPI.shared.fetchSchools(query: "Nebraska") { result in
+            DispatchQueue.main.async {
+                isLoading = false
+                switch result {
+                case .success(let fetchedSchools):
+                    self.schools = fetchedSchools
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+
     var body: some View {
         VStack {
-            // Mock data for the cards
-            let mockCards: [ExploreCard.Model] = [
-                ExploreCard.Model(
-                    school: School(
-                        id: 1,
-                        name: "University of Nebraska-Lincoln",
-                        city: "Lincoln",
-                        state: "NE",
-                        size: 19189,
-                        averageSAT: 25.0,
-                        coaAcademicYear: 2025
-                    ),
-                    swipeDirection: .none
-                ),
-                ExploreCard.Model(
-                                    school: School(
-                                        id: 2,
-                                        name: "University of California, Berkeley",
-                                        city: "Berkeley",
-                                        state: "CA",
-                                        size: 41900,
-                                        averageSAT: 1415,
-                                        coaAcademicYear: 2025
-                                    ),
-                                    swipeDirection: .none
-                                ),
-                                ExploreCard.Model(
-                                    school: School(
-                                        id: 3,
-                                        name: "Harvard University",
-                                        city: "Cambridge",
-                                        state: "MA",
-                                        size: 21000,
-                                        averageSAT: 1520,
-                                        coaAcademicYear: 2025
-                                    ),
-                                    swipeDirection: .none
-                                )
-            ]
-            
-            // Initialize model with the mock cards
-            let model = SwipeableCards.Model(cards: mockCards)
-            
-            SwipeableCards(model: model) { model in
-                print(model.swipedCards)
-                model.reset()  // Reset the cards after swipe
+            if isLoading {
+                ProgressView("Loading schools...")  // Show loading indicator
+            } else if let errorMessage = errorMessage {
+                Text("Error: \(errorMessage)")
+                    .foregroundColor(.red)
+                    .padding()
+            } else {
+                // Initialize SwipeableCards with fetched schools
+                let model = SwipeableCards.Model(
+                    cards: schools.map { school in
+                        // Create a card model for each school
+                        ExploreCard.Model(
+                            school: school
+                        )
+                    }
+                )
+
+                SwipeableCards(model: model) { model in
+                    print(model.swipedCards)
+                    model.reset()  // Reset the cards after swipe
+                }
             }
+        }
+        .onAppear {
+            fetchSchools()  // Fetch schools when view appears
         }
         .background(Color("surface"))
     }
