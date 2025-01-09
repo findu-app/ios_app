@@ -24,17 +24,19 @@ struct SignupValidator {
                 return !data.name.isEmpty && !data.gender.isEmpty
             case 1:  // WelcomeUserView
                 return true  // No validation required for WelcomeUserView
-            case 2:  // ContactInputView
+            case 2: // Ethnicity
+                return !data.ethnicity.isEmpty
+            case 3:  // ContactInputView
                 return data.phone.count == 10
                     && !data.preferredContactMethod.isEmpty
-            case 3:  // AddressInputView
+            case 4:  // AddressInputView
                 return !data.address.isEmpty
-            case 4:  // HSInputView
+            case 5:  // HSInputView
                 return !data.highSchoolName.isEmpty
                     && !data.highSchoolAddress.isEmpty
-            case 5:  // HSGradYearInputView
+            case 6:  // HSGradYearInputView
                 return !data.graduationYear.isEmpty
-            case 6:  // HouseholdInputView
+            case 7:  // HouseholdInputView
                 return !data.householdIncome.isEmpty
                     && !data.financialAidNeed.isEmpty
             default:

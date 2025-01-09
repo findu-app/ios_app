@@ -36,4 +36,5 @@ struct StudentInfoDatabaseModel: Encodable {
     let special_programs: Bool
     let greek_life_interest: Bool
     let research_interest: Bool
+    let ethnicity: String
 }

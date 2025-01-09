@@ -18,6 +18,7 @@ struct StudentProfileData {
     var highSchoolAddress: String = ""
     var graduationYear: String = ""
     var gender: String = ""
+    var ethnicity: String = ""
     var householdIncome: String = ""
     var financialAidNeed: String = ""
 
@@ -65,6 +66,12 @@ struct CreationFlowSteps {
                             AboutMeIntroView(
                                 name: studentData.name
                                     .wrappedValue))
+                    },
+                    {
+                        AnyView(
+                            EthnicityEntryView(
+                                ethnicity: studentData.ethnicity
+                        ))
                     },
                     {
                         AnyView(
@@ -220,7 +227,8 @@ extension StudentProfileData {
             campusCulturePreferences: self.campusCulturePreferences.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) },
             specialPrograms: Bool(self.specialPrograms) ?? false,
             greekLifeInterest: Bool(self.greekLifeInterest) ?? false,
-            researchInterest: Bool(self.researchInterest) ?? false
+            researchInterest: Bool(self.researchInterest) ?? false,
+            ethnicity: self.ethnicity.trimmingCharacters(in: .whitespacesAndNewlines)
         )
     }
 }
