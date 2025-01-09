@@ -41,14 +41,14 @@ struct LoginWithEmailView: View {
             
             VStack(spacing: 8) {
                 Text("Don't have an account?")
-                    .foregroundColor(Color("secondary"))
+                    .foregroundColor(Color("Secondary"))
                 
                 IconButton(
                     iconName: "",
                     text: "Sign Up",
                     action: { path.removeAll(); path.append("signup") },
                     backgroundColor: Color("SurfaceContainer"),
-                    foregroundColor: Color("onSurface")
+                    foregroundColor: Color("OnSurface")
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)

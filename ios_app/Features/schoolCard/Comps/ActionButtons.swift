@@ -19,7 +19,7 @@ struct ActionButtons: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 30)
-                    .foregroundColor(Color("primary"))
+                    .foregroundColor(Color("Primary"))
             }
 
             Spacer()

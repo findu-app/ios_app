@@ -27,7 +27,7 @@ struct ContentView: View {
           if globalStudentState.studentInfo == nil {
               StudentProfileCreationFlow()
           } else {
-              SuccessView()
+              HomeView()
           }
       } else {
         WelcomeView()

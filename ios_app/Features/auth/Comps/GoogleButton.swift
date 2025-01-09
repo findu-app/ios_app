@@ -19,7 +19,7 @@ struct GoogleButton: View {
                 
                 Text("Continue with Google")
                     .font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
-                    .foregroundColor(Color("onSurface"))
+                    .foregroundColor(Color("OnSurface"))
             }
             .frame(maxWidth: .infinity)
             .padding()

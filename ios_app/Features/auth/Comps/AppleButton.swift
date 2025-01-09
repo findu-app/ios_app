@@ -17,14 +17,14 @@ struct AppleButton: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 16)
-                    .foregroundColor(Color("surface"))
+                    .foregroundColor(Color("Surface"))
                 
                 Text("Continue with Apple").font(Font.custom("Plus Jakarta Sans SemiBold", size: 16))
-                    .foregroundColor(Color("surface"))
+                    .foregroundColor(Color("Surface"))
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color("onSurface"))
+            .background(Color("OnSurface"))
             .cornerRadius(10)
         }
     }
