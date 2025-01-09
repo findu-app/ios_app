@@ -111,35 +111,35 @@ struct SchoolMainCardView: View {
                     .foregroundColor(.secondary)
             }
             
-//            if let areas = school.areasOfStudy {
-//                ForEach(areas, id: \.code) { area in
-//                    if let code = area.code {
-//                        Text("Code: \(code)")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                    if let cleanedTitle = area.cleanedTitle {
-//                        Text("Title: \(cleanedTitle)")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                    if let level = area.credential?.level {
-//                        Text("Credential Level: \(level)")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                    
-//                    if let salary = area.afterCollegeSalary {
-//                        Text("After College Salary: \(salary)")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                }
-//            } else {
-//                Text("Areas of Study: Not Available")
-//                    .font(.subheadline)
-//                    .foregroundColor(.secondary)
-//            }
+            if let areas = school.areasOfStudy {
+                ForEach(areas, id: \.code) { area in
+                    if let code = area.code {
+                        Text("Code: \(code)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    if let cleanedTitle = area.cleanedTitle {
+                        Text("Title: \(cleanedTitle)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    if let level = area.credential?.level {
+                        Text("Credential Level: \(level)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let salary = area.afterCollegeSalary {
+                        Text("After College Salary: \(salary)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            } else {
+                Text("Areas of Study: Not Available")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
             
             // Demographics
             DemographicsDisplayView(school: school)
@@ -180,13 +180,7 @@ struct SchoolMainCardView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
-            if let degreesAwarded = school.degreesGranted {
-                Text("Degrees Awarded: \(degreesAwarded)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            
+                        
             if let studentToFaculty = school.studentToFaculty {
                 Text("Student-to-Faculty Ratio: \(studentToFaculty, specifier: "%.2f")")
                     .font(.subheadline)

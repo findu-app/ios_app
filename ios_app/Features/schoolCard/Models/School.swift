@@ -9,50 +9,6 @@ struct SchoolsResponse: Decodable {
     let results: [School]
 }
 
-struct Credential: Decodable, Equatable {
-    let level: Int?
-}
-
-struct Earnings: Decodable, Equatable {
-    struct YearlyEarnings: Decodable, Equatable {
-        let overallMedianEarnings: Int?
-
-        enum CodingKeys: String, CodingKey {
-            case overallMedianEarnings = "overall_median_earnings"
-        }
-    }
-
-    let oneYear: YearlyEarnings?
-
-    enum CodingKeys: String, CodingKey {
-        case oneYear = "1_yr"
-    }
-}
-
-struct AreaOfStudy: Decodable, Equatable {
-    let code: String?
-    let title: String?
-    let credential: Credential?
-    let earnings: Earnings?
-
-    enum CodingKeys: String, CodingKey {
-        case code
-        case title
-        case credential
-        case earnings
-    }
-
-    var afterCollegeSalary: Int? {
-        return earnings?.oneYear?.overallMedianEarnings
-    }
-
-    var cleanedTitle: String? {
-        guard let title = title else { return nil }
-        return title.hasSuffix(".") ? String(title.dropLast()) : title
-    }
-}
-
-
 struct School: Decodable, Identifiable, Equatable {
     let id: Int
     let name: String
@@ -71,7 +27,6 @@ struct School: Decodable, Identifiable, Equatable {
 
     // Academics
     let areasOfStudy: [AreaOfStudy]?
-    let degreesGranted: String?
     let carnegie: Int?
     let studentToFaculty: Float?
 
@@ -83,9 +38,6 @@ struct School: Decodable, Identifiable, Equatable {
     // Campus
     let size: Int?
     let locale: Int?
-    let semester: String?
-    let numOfStudents: Int?
-    let campusSetting: String?
     let religiousAffiliation: Int?
     
     // Demographics
@@ -127,8 +79,6 @@ struct School: Decodable, Identifiable, Equatable {
         case state = "school.state"
         case longitude = "location.lon"
         case latitude = "location.lat"
-        case size = "latest.student.size"
-        case locale = "school.locale"
 
         // Costs
         case averageDebt = "latest.aid.median_debt.completers.overall"
@@ -140,19 +90,17 @@ struct School: Decodable, Identifiable, Equatable {
 
         // Academics
         case areasOfStudy = "latest.programs.cip_4_digit"
-        case degreesGranted = ""
         case carnegie = "school.carnegie_size_setting"
         case studentToFaculty = "latest.student.demographics.student_faculty_ratio"
 
         // Admissions
-        case act = "latest.admissions.act_scores.average.overall"
+        case act = "latest.admissions.act_scores.50th_percentile.cumulative"
         case sat = "latest.admissions.sat_scores.average.overall"
         case admissionsRate = "latest.admissions.admission_rate.overall"
 
         // Campus
-        case semester = "campus.semester"
-        case numOfStudents = "campus.student_population"
-        case campusSetting = "campus.setting"
+        case size = "latest.student.size"
+        case locale = "school.locale"
         case religiousAffiliation = "school.religious_affiliation"
         
         // Demographics
@@ -328,27 +276,4 @@ struct School: Decodable, Identifiable, Equatable {
         }
     }
 
-}
-
-
-struct Interaction: Decodable, Identifiable, Equatable {
-    let id: Int
-    let studentId: Int
-    let schoolId: Int
-    let viewed: Bool
-    let liked: Bool
-    let disliked: Bool
-    let matchScore: Float
-    let interactionDate: String
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case studentId = "student_id"
-        case schoolId = "school_id"
-        case viewed
-        case liked
-        case disliked
-        case matchScore = "match_score"
-        case interactionDate = "interaction_date"
-    }
 }
