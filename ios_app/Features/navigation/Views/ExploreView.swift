@@ -25,34 +25,34 @@ struct ExploreView: View {
                     swipeDirection: .none
                 ),
                 ExploreCard.Model(
-                                    school: School(
-                                        id: 2,
-                                        name: "University of California, Berkeley",
-                                        city: "Berkeley",
-                                        state: "CA",
-                                        size: 41900,
-                                        averageSAT: 1415,
-                                        coaAcademicYear: 2025
-                                    ),
-                                    swipeDirection: .none
-                                ),
-                                ExploreCard.Model(
-                                    school: School(
-                                        id: 3,
-                                        name: "Harvard University",
-                                        city: "Cambridge",
-                                        state: "MA",
-                                        size: 21000,
-                                        averageSAT: 1520,
-                                        coaAcademicYear: 2025
-                                    ),
-                                    swipeDirection: .none
-                                )
+                    school: School(
+                        id: 2,
+                        name: "University of California, Berkeley",
+                        city: "Berkeley",
+                        state: "CA",
+                        size: 41900,
+                        averageSAT: 1415,
+                        coaAcademicYear: 2025
+                    ),
+                    swipeDirection: .none
+                ),
+                ExploreCard.Model(
+                    school: School(
+                        id: 3,
+                        name: "Harvard University",
+                        city: "Cambridge",
+                        state: "MA",
+                        size: 21000,
+                        averageSAT: 1520,
+                        coaAcademicYear: 2025
+                    ),
+                    swipeDirection: .none
+                ),
             ]
-            
+
             // Initialize model with the mock cards
             let model = SwipeableCards.Model(cards: mockCards)
-            
+
             SwipeableCards(model: model) { model in
                 print(model.swipedCards)
                 model.reset()  // Reset the cards after swipe

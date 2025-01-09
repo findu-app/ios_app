@@ -72,11 +72,25 @@ struct ExploreCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Tags
                     StatTagList(tags: [
-                        ["label": "Average ACT", "stat": "\(model.school.averageSAT)", "match": "High"],
-                        ["label": "Public or Private?", "stat": "", "match": "Med"],
+                        [
+                            "label": "Average ACT",
+                            "stat": "\(model.school.averageSAT)",
+                            "match": "High",
+                        ],
+                        [
+                            "label": "Public or Private?", "stat": "",
+                            "match": "Med",
+                        ],
                         ["label": "Avg Aid:", "stat": "", "match": "Low"],
-                        ["label": "Avg Tuition:", "stat": "\(model.school.coaAcademicYear)", "match": "High"],
-                        ["label": "Student Size:", "stat": "\(model.school.size)", "match": "High"]
+                        [
+                            "label": "Avg Tuition:",
+                            "stat": "\(model.school.coaAcademicYear)",
+                            "match": "High",
+                        ],
+                        [
+                            "label": "Student Size:",
+                            "stat": "\(model.school.size)", "match": "High",
+                        ],
                     ])
                     .padding(.top, 12)
 

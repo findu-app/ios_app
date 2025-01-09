@@ -46,7 +46,8 @@ struct SchoolsListView: View {
         campusCulturePreferences: ["Diverse community", "STEM-focused programs"],
         specialPrograms: true,
         greekLifeInterest: false,
-        researchInterest: true
+        researchInterest: true,
+        ethnicity: "White"
     )
 
 
