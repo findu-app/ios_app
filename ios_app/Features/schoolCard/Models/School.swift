@@ -133,6 +133,19 @@ struct School: Decodable, Identifiable, Equatable {
         case workingNotEnrolled = "working_not_enrolled"
     }
     
+    var ownershipDescription: String {
+            switch ownership {
+            case 1:
+                return "Public"
+            case 2:
+                return "Private Nonprofit"
+            case 3:
+                return "Private For-Profit"
+            default:
+                return "Unknown Ownership Type"
+            }
+        }
+    
     var averageFinancialAid: Int? {
         guard let coa = coaAcademicYear else { return nil }
         let netPrice = averageNetPricePublic ?? averageNetPricePrivate ?? 0

@@ -54,25 +54,26 @@ struct ExploreCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Tags
                     HStack(spacing: 8) {
-                        TagView(text: "Average ACT: \(model.school.actScore)", backgroundColor: Color.yellow)
-                        TagView(text: "Public or Private?", backgroundColor: Color.green)
+                        TagView(text: "Average ACT: \(model.school.actScore ?? 0)", backgroundColor: Color.yellow) // Provide a default value
+                        TagView(text: "\(model.school.ownershipDescription)", backgroundColor: Color.green)
                     }
                     .padding(.top, 12)
 
                     HStack(spacing: 8) {
-                        TagView(text: "Avg Aid: \(model.school.averageFinancialAid)", backgroundColor: Color.green)
-                        TagView(text: "Avg Tuition: \(model.school.inStateTuition)", backgroundColor: Color.green)
-                        TagView(text: "Student Size: \(model.school.size)", backgroundColor: Color.red)
+                        TagView(text: "Avg Aid: \(model.school.averageFinancialAid ?? 0)", backgroundColor: Color.green)
+                        TagView(text: "Avg Tuition: \(model.school.inStateTuition ?? 0)", backgroundColor: Color.green)
+                        TagView(text: "Student Size: \(model.school.size ?? 0)", backgroundColor: Color.red)
                     }
+
 
                     // Main College Info
                     HStack {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(model.school.name)
+                            Text(model.school.name ?? "Unknown School") // Fallback to "Unknown School"
                                 .font(Font.custom("Plus Jakarta Sans Bold", size: 24))
                                 .foregroundColor(Color.white)
 
-                            Text("\(model.school.city), \(model.school.state)")
+                            Text("\(model.school.city ?? "Unknown City"), \(model.school.state ?? "Unknown State")")
                                 .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
                                 .foregroundColor(Color.white)
                         }
