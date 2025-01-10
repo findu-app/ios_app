@@ -55,22 +55,28 @@ struct ExploreCard: View {
                     StatTagList(tags: [
                         [
                             "label": "Average ACT",
-                            "stat": "\(model.school.actScore ?? 0)",
+                            "stat": model.school.actScore != nil ? "\(model.school.actScore!)" : "N/A",
                             "match": "High",
                         ],
                         [
-                            "label": "Public or Private?", "stat": "\(model.school.ownershipDescription)",
+                            "label": "",
+                            "stat": model.school.ownershipDescription ?? "N/A",
                             "match": "Med",
                         ],
-                        ["label": "Avg Aid", "stat": "\(model.school.averageFinancialAid ?? 0)", "match": "Low"],
+                        [
+                            "label": "Avg Aid",
+                            "stat": model.school.averageFinancialAid != nil ? "\(model.school.averageFinancialAid!)" : "N/A",
+                            "match": "Low",
+                        ],
                         [
                             "label": "Avg Tuition",
-                            "stat": "\(model.school.inStateTuition ?? 0)",
+                            "stat": model.school.inStateTuition != nil ? "\(model.school.inStateTuition!)" : "N/A",
                             "match": "High",
                         ],
                         [
                             "label": "Student Size",
-                            "stat": "\(model.school.size ?? 0))", "match": "High",
+                            "stat": model.school.size != nil ? "\(model.school.size!)" : "N/A",
+                            "match": "High",
                         ],
                     ])
                     .padding(.top, 12)
@@ -100,7 +106,6 @@ struct ExploreCard: View {
                         onReverse: { print("Reverse button tapped") },
                         onLike: { onSwipe(.right) }
                     )
-                    .padding(.bottom, 24)
                 }
                 .padding()
                 .frame(maxWidth: .infinity)

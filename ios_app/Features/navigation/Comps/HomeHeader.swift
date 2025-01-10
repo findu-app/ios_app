@@ -22,7 +22,7 @@ struct HomeHeader: View {
             
             Image(systemName: "magnifyingglass")
                 .font(.title)
-                .foregroundColor(Color("onSurface"))
+                .foregroundColor(Color("OnSurface"))
         }
         .padding(.horizontal)
         .padding(.bottom)
