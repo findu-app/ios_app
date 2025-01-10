@@ -41,7 +41,7 @@ struct HomeNavBar: View {
         }
         .padding()
         .padding(.bottom, 29)
-        .background(Color("surface"))
+        .background(Color("Surface"))
     }
 }
 

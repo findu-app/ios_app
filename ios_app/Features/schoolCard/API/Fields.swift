@@ -17,7 +17,7 @@ struct Fields {
     latest.programs.cip_4_digit.title,latest.programs.cip_4_digit.code,latest.programs.cip_4_digit.earnings.1_yr.overall_median_earnings,\
     latest.programs.cip_4_digit.credential.level,school.carnegie_size_setting,\
     latest.student.demographics.student_faculty_ratio,\
-    latest.admissions.act_scores.50th_percentile.cumulative,\
+    latest.admissions.act_scores.midpoint.cumulative,\
     latest.admissions.sat_scores.average.overall,\
     latest.admissions.admission_rate.overall,\
     latest.student.demographics.race_ethnicity.white,\

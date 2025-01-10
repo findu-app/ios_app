@@ -60,8 +60,8 @@ struct ExploreCard: View {
                     .padding(.top, 12)
 
                     HStack(spacing: 8) {
-                        TagView(text: "Avg Aid: ", backgroundColor: Color.green)
-                        TagView(text: "Avg Tuition: \(model.school.coaAcademicYear)", backgroundColor: Color.green)
+                        TagView(text: "Avg Aid: \(model.school.averageFinancialAid)", backgroundColor: Color.green)
+                        TagView(text: "Avg Tuition: \(model.school.inStateTuition)", backgroundColor: Color.green)
                         TagView(text: "Student Size: \(model.school.size)", backgroundColor: Color.red)
                     }
 

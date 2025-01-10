@@ -16,6 +16,9 @@ struct School: Decodable, Identifiable, Equatable {
     let state: String
     let longitude: Float?
     let latitude: Float?
+    let ownership: Int?
+    let schoolUrl: String?
+    let priceCalculatorUrl: String?
 
     // Costs
     let averageDebt: Float?
@@ -56,11 +59,8 @@ struct School: Decodable, Identifiable, Equatable {
     let men: Float?
     let women: Float?
 
-
     // Outcomes
-    // after college salary is by area of study
     let fourYearGradRate: Float?
-    // employment rate calc'd seperate
     let fourYearRetentionRate: Float?
     let lessThanFourYearRetentionRate: Float?
     let percentEarningMoreThanHSGrad: Float?
@@ -79,6 +79,9 @@ struct School: Decodable, Identifiable, Equatable {
         case state = "school.state"
         case longitude = "location.lon"
         case latitude = "location.lat"
+        case ownership = "school.ownership"
+        case schoolUrl = "school.school_url"
+        case priceCalculatorUrl = "school.price_calculator_url"
 
         // Costs
         case averageDebt = "latest.aid.median_debt.completers.overall"
@@ -94,7 +97,7 @@ struct School: Decodable, Identifiable, Equatable {
         case studentToFaculty = "latest.student.demographics.student_faculty_ratio"
 
         // Admissions
-        case act = "latest.admissions.act_scores.50th_percentile.cumulative"
+        case act = "latest.admissions.act_scores.midpoint.cumulative"
         case sat = "latest.admissions.sat_scores.average.overall"
         case admissionsRate = "latest.admissions.admission_rate.overall"
 
@@ -119,10 +122,8 @@ struct School: Decodable, Identifiable, Equatable {
         case men = "latest.student.demographics.men"
         case women = "latest.student.demographics.women"
 
-
         // Outcomes
         case fourYearGradRate = "latest.completion.completion_rate_4yr_150nt"
-        // calculated employment rate different var
         case fourYearRetentionRate = "latest.student.retention_rate.four_year.full_time_pooled"
         case lessThanFourYearRetentionRate = "latest.student.retention_rate.lt_four_year.full_time_pooled"
         case percentEarningMoreThanHSGrad = "latest.earnings.6_yrs_after_entry.gt_threshold"
@@ -135,14 +136,34 @@ struct School: Decodable, Identifiable, Equatable {
         case interactions
     }
     
-    var calculatedEmploymentRate: Float? {
-            guard let notWorking = notWorkingNotEnrolled, let working = workingNotEnrolled else {
-                return nil
-            }
-            let total = notWorking + working
-            return total > 0 ? (Float(working) / Float(total)) * 100 : nil
+    // Translated Ownership
+    var ownershipDescription: String {
+        switch ownership {
+        case 1:
+            return "Public"
+        case 2:
+            return "Private Nonprofit"
+        case 3:
+            return "Private For-Profit"
+        default:
+            return "Unknown Ownership Type"
         }
+    }
 
+    // Computed property for Average Financial Aid
+    var averageFinancialAid: Int? {
+        guard let coa = coaAcademicYear else { return nil }
+        let netPrice = averageNetPricePublic ?? averageNetPricePrivate ?? 0
+        return max(0, coa - netPrice)
+    }
+
+    var calculatedEmploymentRate: Float? {
+        guard let notWorking = notWorkingNotEnrolled, let working = workingNotEnrolled else {
+            return nil
+        }
+        let total = notWorking + working
+        return total > 0 ? (Float(working) / Float(total)) * 100 : nil
+    }
     
     var religiousAffiliationDescription: String {
             guard let affiliation = self.religiousAffiliation else {

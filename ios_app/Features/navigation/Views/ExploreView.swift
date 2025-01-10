@@ -58,7 +58,7 @@ struct ExploreView: View {
         .onAppear {
             fetchSchools()  // Fetch schools when view appears
         }
-        .background(Color("surface"))
+        .background(Color("Surface"))
     }
 }
 

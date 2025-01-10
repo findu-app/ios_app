@@ -22,7 +22,7 @@ struct HomeNavBarIconButton: View {
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 9))
         }
         .frame(maxWidth: .infinity)
-        .foregroundColor(isSelected ? Color("primary") : Color("onSurface"))
+        .foregroundColor(isSelected ? Color("Primary") : Color("onSurface"))
         .onTapGesture {
             action()
         }
