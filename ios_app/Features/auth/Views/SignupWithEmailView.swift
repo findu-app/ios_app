@@ -36,7 +36,6 @@ struct SignupWithEmailView: View {
                     viewModel.handleSignup(path: $path, isModalPresented: $isModalPresented)
                 }
             }
-            .padding()
             
             Spacer()
                 .frame(height: 174)

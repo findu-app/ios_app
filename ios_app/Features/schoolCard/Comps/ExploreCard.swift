@@ -1,12 +1,10 @@
-//
 //  ExploreCard.swift
 //  ios_app
 //
 //  Created by Wilson Overfield on 1/7/25.
-//
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct ExploreCard: View {
     enum SwipeDirection {
@@ -28,6 +26,7 @@ struct ExploreCard: View {
     @State private var isLoadingMap = true
 
     var onSwipe: (SwipeDirection) -> Void
+
 
     var body: some View {
         ZStack {
@@ -53,18 +52,28 @@ struct ExploreCard: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     // Tags
-                    HStack(spacing: 8) {
-                        TagView(text: "Average ACT: \(model.school.actScore ?? 0)", backgroundColor: Color.yellow) // Provide a default value
-                        TagView(text: "\(model.school.ownershipDescription)", backgroundColor: Color.green)
-                    }
+                    StatTagList(tags: [
+                        [
+                            "label": "Average ACT",
+                            "stat": "\(model.school.actScore ?? 0)",
+                            "match": "High",
+                        ],
+                        [
+                            "label": "Public or Private?", "stat": "\(model.school.ownershipDescription)",
+                            "match": "Med",
+                        ],
+                        ["label": "Avg Aid", "stat": "\(model.school.averageFinancialAid ?? 0)", "match": "Low"],
+                        [
+                            "label": "Avg Tuition",
+                            "stat": "\(model.school.inStateTuition ?? 0)",
+                            "match": "High",
+                        ],
+                        [
+                            "label": "Student Size",
+                            "stat": "\(model.school.size ?? 0))", "match": "High",
+                        ],
+                    ])
                     .padding(.top, 12)
-
-                    HStack(spacing: 8) {
-                        TagView(text: "Avg Aid: \(model.school.averageFinancialAid ?? 0)", backgroundColor: Color.green)
-                        TagView(text: "Avg Tuition: \(model.school.inStateTuition ?? 0)", backgroundColor: Color.green)
-                        TagView(text: "Student Size: \(model.school.size ?? 0)", backgroundColor: Color.red)
-                    }
-
 
                     // Main College Info
                     HStack {
@@ -96,7 +105,12 @@ struct ExploreCard: View {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(
-                    BlurView(style: .regular, overlayColor: Color(red: 83 / 255, green: 83 / 255, blue: 83 / 255, opacity: 0.5))
+                    ZStack {
+                        BlurView(style: .systemMaterialDark)
+                            .cornerRadius(20)
+                        Color.black.opacity(0.4)
+                            .cornerRadius(20)
+                    }
                 )
                 .cornerRadius(20)
                 .padding(.horizontal, 16)

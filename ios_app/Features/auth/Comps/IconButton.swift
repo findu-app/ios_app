@@ -11,8 +11,8 @@ struct IconButton: View {
     var iconName: String
     var text: String
     var action: () -> Void
-    var backgroundColor: Color = Color("primary")
-    var foregroundColor: Color = Color("onPrimary")
+    var backgroundColor: Color = Color("Primary")
+    var foregroundColor: Color = Color("OnPrimary")
     
     var body: some View {
         Button(action: action) {
@@ -41,8 +41,8 @@ struct IconButton: View {
             iconName: "envelope",
             text: "Continue with Email",
             action: { print("Email Button tapped") },
-            backgroundColor: Color("secondary"),
-            foregroundColor: Color("onSurface")
+            backgroundColor: Color("Secondary"),
+            foregroundColor: Color("OnSurface")
         )
         
         IconButton(

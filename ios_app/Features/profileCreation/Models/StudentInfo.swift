@@ -35,6 +35,7 @@ struct StudentInfo: Codable {
     let specialPrograms: Bool
     let greekLifeInterest: Bool
     let researchInterest: Bool
+    let ethnicity: String
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -64,6 +65,7 @@ struct StudentInfo: Codable {
         case specialPrograms = "special_programs"
         case greekLifeInterest = "greek_life_interest"
         case researchInterest = "research_interest"
+        case ethnicity = "ethnicity"
     }
 }
 
@@ -96,7 +98,8 @@ extension StudentInfo {
             campus_culture_preferences: campusCulturePreferences.map { $0 },
             special_programs: specialPrograms,
             greek_life_interest: greekLifeInterest,
-            research_interest: researchInterest
+            research_interest: researchInterest,
+            ethnicity: ethnicity
         )
     }
 }
@@ -170,6 +173,16 @@ enum Rigor: String, CaseIterable, Codable {
     case low = "Low"
     case medium = "Medium"
     case high = "High"
+}
+
+enum Ethnicity: String, CaseIterable, Codable {
+    case white = "White or Caucasian"
+    case black = "Black or African American"
+    case Hispanic = " Hispanic or Latino"
+    case Asian = "Asian or Pacific Islander"
+    case PacificIslander = "Native American or Alaskan Native"
+    case MultiRacial = "Multi-racial"
+    case NotListed = "Other / Not Listed"
 }
 
 enum Activity: String, CaseIterable, Codable {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23C799E52D2F2CA6009215D2 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 23C799E42D2F2CA6009215D2 /* WrappingHStack */; };
 		EFED5F452D1FEC2900705D9C /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = EFED5F442D1FEC2900705D9C /* Auth */; };
 		EFED5F472D1FEC2900705D9C /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = EFED5F462D1FEC2900705D9C /* Functions */; };
 		EFED5F492D1FEC2900705D9C /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = EFED5F482D1FEC2900705D9C /* PostgREST */; };
@@ -43,6 +44,7 @@
 				EFED5F472D1FEC2900705D9C /* Functions in Frameworks */,
 				EFED5F4F2D1FEC2900705D9C /* Supabase in Frameworks */,
 				EFED5F702D236CFC00705D9C /* GoogleSignInSwift in Frameworks */,
+				23C799E52D2F2CA6009215D2 /* WrappingHStack in Frameworks */,
 				EFED5F452D1FEC2900705D9C /* Auth in Frameworks */,
 				EFED5F4D2D1FEC2900705D9C /* Storage in Frameworks */,
 				EFED5F4B2D1FEC2900705D9C /* Realtime in Frameworks */,
@@ -99,6 +101,7 @@
 				EFED5F4E2D1FEC2900705D9C /* Supabase */,
 				EFED5F6D2D236CFC00705D9C /* GoogleSignIn */,
 				EFED5F6F2D236CFC00705D9C /* GoogleSignInSwift */,
+				23C799E42D2F2CA6009215D2 /* WrappingHStack */,
 			);
 			productName = ios_app;
 			productReference = D28890E82D1DC12E00F95263 /* ios_app.app */;
@@ -131,6 +134,7 @@
 			packageReferences = (
 				EFCB8B8C2D1F5E4E008F2D6C /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				EFED5F6C2D236CFC00705D9C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				23C799E32D2F2CA6009215D2 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D28890E92D1DC12E00F95263 /* Products */;
@@ -374,6 +378,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		23C799E32D2F2CA6009215D2 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dkk/WrappingHStack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.11;
+			};
+		};
 		EFCB8B8C2D1F5E4E008F2D6C /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -393,6 +405,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		23C799E42D2F2CA6009215D2 /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23C799E32D2F2CA6009215D2 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
+		};
 		EFED5F442D1FEC2900705D9C /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EFCB8B8C2D1F5E4E008F2D6C /* XCRemoteSwiftPackageReference "supabase-swift" */;
