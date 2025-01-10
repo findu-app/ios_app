@@ -13,7 +13,7 @@ class CollegeAPI {
 
     private init() {}
 
-    func fetchSchools(query: String?, completion: @escaping (Result<[School], Error>) -> Void) {
+    func fetchSchools(query: String?, completion: @escaping (Result<[SchoolAPI], Error>) -> Void) {
         guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"] else {
             fatalError("API key is missing.")
         }
@@ -51,7 +51,7 @@ class CollegeAPI {
 
             do {
                 let decoder = JSONDecoder()
-                let response = try decoder.decode(SchoolsResponse.self, from: data)
+                let response = try decoder.decode(SchoolsAPIResponse.self, from: data)
                 completion(.success(response.results))
             } catch {
                 completion(.failure(error))

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SchoolMainCardView: View {
-    let school: School
+    let school: SchoolAPI
     let student: StudentInfo
     
     func calculateMatchScore() -> Int {

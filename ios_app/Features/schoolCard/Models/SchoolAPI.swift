@@ -2,21 +2,20 @@
 //  School.swift
 //  ios_app
 //
-//  Created by Wilson Overfield on 1/9/25.
+//  Created by Wilson Overfield on 1/4/25.
 //
 
+struct SchoolsAPIResponse: Decodable {
+    let results: [SchoolAPI]
+}
 
-import Foundation
-
-struct School: Decodable, Identifiable, Equatable {
-    // General Information
-    let id: UUID
-    let apiId: String
+struct SchoolAPI: Decodable, Identifiable, Equatable {
+    let id: Int
     let name: String
-    let city: String?
-    let state: String?
-    let latitude: Float?
+    let city: String
+    let state: String
     let longitude: Float?
+    let latitude: Float?
     let ownership: Int?
     let schoolUrl: String?
     let priceCalculatorUrl: String?
@@ -30,20 +29,20 @@ struct School: Decodable, Identifiable, Equatable {
     let coaAcademicYear: Int?
 
     // Academics
+    let areasOfStudy: [AreaOfStudy]?
     let carnegie: Int?
-    let studentToFacultyRatio: Float?
-    let areasOfStudy: [AreaOfStudy]? // Decoded from JSONB
+    let studentToFaculty: Float?
 
     // Admissions
-    let actScore: Float?
-    let satScore: Float?
+    let act: Float?
+    let sat: Float?
     let admissionsRate: Float?
 
     // Campus
     let size: Int?
     let locale: Int?
     let religiousAffiliation: Int?
-
+    
     // Demographics
     let white: Float?
     let black: Float?
@@ -65,74 +64,93 @@ struct School: Decodable, Identifiable, Equatable {
     let fourYearRetentionRate: Float?
     let lessThanFourYearRetentionRate: Float?
     let percentEarningMoreThanHSGrad: Float?
-
+    
     // Employment Data
     let notWorkingNotEnrolled: Int?
     let workingNotEnrolled: Int?
 
-    // Decoding keys
+    // Associative relationship with interactions
+    let interactions: [Interaction]?
+
     enum CodingKeys: String, CodingKey {
         case id
-        case apiId = "api_id"
-        case name
-        case city
-        case state
-        case latitude
-        case longitude
-        case ownership
-        case schoolUrl = "school_url"
-        case priceCalculatorUrl = "price_calculator_url"
+        case name = "school.name"
+        case city = "school.city"
+        case state = "school.state"
+        case longitude = "location.lon"
+        case latitude = "location.lat"
+        case ownership = "school.ownership"
+        case schoolUrl = "school.school_url"
+        case priceCalculatorUrl = "school.price_calculator_url"
 
         // Costs
-        case averageDebt = "average_debt"
-        case averageNetPricePublic = "average_net_price_public"
-        case averageNetPricePrivate = "average_net_price_private"
-        case inStateTuition = "in_state_tuition"
-        case outStateTuition = "out_state_tuition"
-        case coaAcademicYear = "coa_academic_year"
+        case averageDebt = "latest.aid.median_debt.completers.overall"
+        case averageNetPricePublic = "latest.cost.avg_net_price.public"
+        case averageNetPricePrivate = "latest.cost.avg_net_price.private"
+        case inStateTuition = "latest.cost.tuition.in_state"
+        case outStateTuition = "latest.cost.tuition.out_of_state"
+        case coaAcademicYear = "latest.cost.attendance.academic_year"
 
         // Academics
-        case carnegie
-        case studentToFacultyRatio = "student_to_faculty_ratio"
-        case areasOfStudy = "areas_of_study"
+        case areasOfStudy = "latest.programs.cip_4_digit"
+        case carnegie = "school.carnegie_size_setting"
+        case studentToFaculty = "latest.student.demographics.student_faculty_ratio"
 
         // Admissions
-        case actScore = "act_score"
-        case satScore = "sat_score"
-        case admissionsRate = "admissions_rate"
+        case act = "latest.admissions.act_scores.midpoint.cumulative"
+        case sat = "latest.admissions.sat_scores.average.overall"
+        case admissionsRate = "latest.admissions.admission_rate.overall"
 
         // Campus
-        case size
-        case locale
-        case religiousAffiliation = "religious_affiliation"
-
+        case size = "latest.student.size"
+        case locale = "school.locale"
+        case religiousAffiliation = "school.religious_affiliation"
+        
         // Demographics
-        case white
-        case black
-        case hispanic
-        case asian
-        case aian
-        case nhpi
-        case twoOrMore = "two_or_more"
-        case nonResidentAlien = "non_resident_alien"
-        case unknown
-        case whiteNonHispanic = "white_non_hispanic"
-        case blackNonHispanic = "black_non_hispanic"
-        case asianPacificIslander = "asian_pacific_islander"
-        case men
-        case women
+        case white = "latest.student.demographics.race_ethnicity.white"
+        case black = "latest.student.demographics.race_ethnicity.black"
+        case hispanic = "latest.student.demographics.race_ethnicity.hispanic"
+        case asian = "latest.student.demographics.race_ethnicity.asian"
+        case aian = "latest.student.demographics.race_ethnicity.aian"
+        case nhpi = "latest.student.demographics.race_ethnicity.nhpi"
+        case twoOrMore = "latest.student.demographics.race_ethnicity.two_or_more"
+        case nonResidentAlien = "latest.student.demographics.race_ethnicity.non_resident_alien"
+        case unknown = "latest.student.demographics.race_ethnicity.unknown"
+        case whiteNonHispanic = "latest.student.demographics.race_ethnicity.white_non_hispanic"
+        case blackNonHispanic = "latest.student.demographics.race_ethnicity.black_non_hispanic"
+        case asianPacificIslander = "latest.student.demographics.race_ethnicity.asian_pacific_islander"
+        case men = "latest.student.demographics.men"
+        case women = "latest.student.demographics.women"
 
         // Outcomes
-        case fourYearGradRate = "four_year_grad_rate"
-        case fourYearRetentionRate = "four_year_retention_rate"
-        case lessThanFourYearRetentionRate = "less_than_four_year_retention_rate"
-        case percentEarningMoreThanHSGrad = "percent_earning_more_than_hs_grad"
+        case fourYearGradRate = "latest.completion.completion_rate_4yr_150nt"
+        case fourYearRetentionRate = "latest.student.retention_rate.four_year.full_time_pooled"
+        case lessThanFourYearRetentionRate = "latest.student.retention_rate.lt_four_year.full_time_pooled"
+        case percentEarningMoreThanHSGrad = "latest.earnings.6_yrs_after_entry.gt_threshold"
 
         // Employment Data
-        case notWorkingNotEnrolled = "not_working_not_enrolled"
-        case workingNotEnrolled = "working_not_enrolled"
+        case notWorkingNotEnrolled = "latest.earnings.1_yr_after_completion.not_working_not_enrolled.overall_count"
+        case workingNotEnrolled = "latest.earnings.1_yr_after_completion.working_not_enrolled.overall_count"
+
+        // Interactions
+        case interactions
     }
     
+    // Translated Ownership
+    var ownershipDescription: String {
+        switch ownership {
+        case 1:
+            return "Public"
+        case 2:
+            return "Private Nonprofit"
+        case 3:
+            return "Private For-Profit"
+        default:
+            return "Unknown Ownership Type"
+        }
+    }
+
+    // Computed property for Average Financial Aid
     var averageFinancialAid: Int? {
         guard let coa = coaAcademicYear else { return nil }
         let netPrice = averageNetPricePublic ?? averageNetPricePrivate ?? 0

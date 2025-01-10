@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct DemographicsDisplayView: View {
-    let school: School
+    let school: SchoolAPI
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

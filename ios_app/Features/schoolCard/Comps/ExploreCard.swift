@@ -27,11 +27,12 @@ struct ExploreCard: View {
     @State private var mapRegion: MKCoordinateRegion?
     @State private var isLoadingMap = true
 
+    var onSwipe: (SwipeDirection) -> Void
+
     var body: some View {
         ZStack {
             // Background Image
             if let region = mapRegion {
-                // Apple Map background
                 Map(coordinateRegion: .constant(region))
                     .cornerRadius(20)
                     .overlay(
@@ -42,7 +43,6 @@ struct ExploreCard: View {
                         )
                     )
             } else {
-                // Placeholder while map is loading
                 Color.gray
                     .cornerRadius(20)
             }
@@ -54,7 +54,7 @@ struct ExploreCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Tags
                     HStack(spacing: 8) {
-                        TagView(text: "Average ACT: \(model.school.act)", backgroundColor: Color.yellow)
+                        TagView(text: "Average ACT: \(model.school.actScore)", backgroundColor: Color.yellow)
                         TagView(text: "Public or Private?", backgroundColor: Color.green)
                     }
                     .padding(.top, 12)
@@ -71,36 +71,32 @@ struct ExploreCard: View {
                             Text(model.school.name)
                                 .font(Font.custom("Plus Jakarta Sans Bold", size: 24))
                                 .foregroundColor(Color.white)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
 
                             Text("\(model.school.city), \(model.school.state)")
                                 .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
                                 .foregroundColor(Color.white)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         Text("A+")
                             .font(Font.custom("Plus Jakarta Sans Bold", size: 32))
-                            .foregroundColor(Color(red: 2 / 255, green: 255 / 255, blue: 127 / 255))
+                            .foregroundColor(Color.green)
                             .frame(alignment: .trailing)
                     }
 
                     // Action Buttons
                     ActionButtons(
-                        onDislike: { print("Dislike button tapped") },
+                        onDislike: { onSwipe(.left) },
                         onReverse: { print("Reverse button tapped") },
-                        onLike: { print("Like button tapped") }
+                        onLike: { onSwipe(.right) }
                     )
                     .padding(.bottom, 24)
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(
-                    BlurView(style: .regular, overlayColor: Color(red: 83 / 255, green: 83 / 255, blue: 83 / 255, opacity: 0.5)
-                    ))
+                    BlurView(style: .regular, overlayColor: Color(red: 83 / 255, green: 83 / 255, blue: 83 / 255, opacity: 0.5))
+                )
                 .cornerRadius(20)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -109,7 +105,6 @@ struct ExploreCard: View {
         .frame(width: 361, height: 616)
         .cornerRadius(20)
         .onAppear {
-            // Initialize the mapRegion dynamically
             if let lat = model.school.latitude, let lon = model.school.longitude {
                 mapRegion = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)),
@@ -119,6 +114,7 @@ struct ExploreCard: View {
         }
     }
 }
+
 
 struct TagView: View {
     let text: String
