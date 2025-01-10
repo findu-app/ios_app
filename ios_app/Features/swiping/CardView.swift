@@ -1,109 +1,87 @@
-//  ExploreCard.swift
-//  ios_app
-//
-//  Created by Wilson Overfield on 1/7/25.
-
-import MapKit
 import SwiftUI
+import MapKit
 
-struct ExploreCard: View {
-    enum SwipeDirection {
-        case left, right, none
-    }
-
-    struct Model: Identifiable, Equatable {
-        let id = UUID()
-        let school: School
-        var swipeDirection: SwipeDirection = .none
-    }
-
-    var model: Model
-    var dragOffset: CGSize
-    var isTopCard: Bool
-    var isSecondCard: Bool
-
+struct CardView: View {
+    let school: School
+    let matchScore: String // In CardView
+    /// Provide a closure so external views can handle the swipe.
+    let onSwipe: (CardSwipeDirection) -> Void
+    let onReverse: () -> Void  // <-- New closure for undo
+    
     @State private var mapRegion: MKCoordinateRegion?
     @State private var isLoadingMap = true
 
-    var onSwipe: (SwipeDirection) -> Void
-
-
     var body: some View {
         ZStack {
-            // Background Image
-            if let region = mapRegion {
-                Map(coordinateRegion: .constant(region))
-                    .cornerRadius(20)
-                    .overlay(
-                        LinearGradient(
-                            colors: [Color.black.opacity(0.6), Color.clear],
-                            startPoint: .bottom,
-                            endPoint: .top
-                        )
+            // Map or placeholder
+            if let latitude = school.latitude, let longitude = school.longitude {
+                Map(coordinateRegion: .constant(
+                    MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude)),
+                        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
                     )
+                ))
+                .cornerRadius(20)
+                .overlay(
+                    LinearGradient(
+                        colors: [Color.black.opacity(0.6), Color.clear],
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
+                    .cornerRadius(20)
+                )
             } else {
                 Color.gray
                     .cornerRadius(20)
             }
 
-            // Gray blurred container
             VStack {
                 Spacer()
 
+                // Card Info & Action Buttons
                 VStack(alignment: .leading, spacing: 12) {
-                    // Tags
+                    // Additional stats or tags
                     StatTagList(tags: [
                         [
                             "label": "Average ACT",
-                            "stat": model.school.actScore != nil ? "\(model.school.actScore!)" : "N/A",
+                            "stat": school.actScore != nil ? "\(school.actScore!)" : "N/A",
                             "match": "High",
                         ],
                         [
-                            "label": "",
-                            "stat": model.school.ownershipDescription ?? "N/A",
-                            "match": "Med",
-                        ],
-                        [
                             "label": "Avg Aid",
-                            "stat": model.school.averageFinancialAid != nil ? "\(model.school.averageFinancialAid!)" : "N/A",
+                            "stat": school.averageFinancialAid != nil ? "\(school.averageFinancialAid!)" : "N/A",
                             "match": "Low",
                         ],
                         [
                             "label": "Avg Tuition",
-                            "stat": model.school.inStateTuition != nil ? "\(model.school.inStateTuition!)" : "N/A",
+                            "stat": school.inStateTuition != nil ? "\(school.inStateTuition!)" : "N/A",
                             "match": "High",
-                        ],
-                        [
-                            "label": "Student Size",
-                            "stat": model.school.size != nil ? "\(model.school.size!)" : "N/A",
-                            "match": "High",
-                        ],
+                        ]
                     ])
-                    .padding(.top, 12)
 
                     // Main College Info
                     HStack {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(model.school.name ?? "Unknown School") // Fallback to "Unknown School"
+                            Text(school.name ?? "Unknown School")
                                 .font(Font.custom("Plus Jakarta Sans Bold", size: 24))
-                                .foregroundColor(Color.white)
+                                .foregroundColor(.white)
 
-                            Text("\(model.school.city ?? "Unknown City"), \(model.school.state ?? "Unknown State")")
+                            Text("\(school.city ?? "Unknown City"), \(school.state ?? "Unknown State")")
                                 .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
-                                .foregroundColor(Color.white)
+                                .foregroundColor(.white)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text("A+")
+                        Text("\(matchScore)")
                             .font(Font.custom("Plus Jakarta Sans Bold", size: 32))
-                            .foregroundColor(Color.green)
+                            .foregroundColor(.green)
                             .frame(alignment: .trailing)
                     }
 
-                    // Action Buttons
+                    // Action Buttons: Call the closure on swipe
                     ActionButtons(
                         onDislike: { onSwipe(.left) },
-                        onReverse: { print("Reverse button tapped") },
+                        onReverse: onReverse,
                         onLike: { onSwipe(.right) }
                     )
                 }
@@ -111,6 +89,7 @@ struct ExploreCard: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     ZStack {
+                        // Blur & color overlay
                         BlurView(style: .systemMaterialDark)
                             .cornerRadius(20)
                         Color.black.opacity(0.4)
@@ -122,32 +101,17 @@ struct ExploreCard: View {
                 .padding(.bottom, 16)
             }
         }
-        .frame(width: 361, height: 616)
         .cornerRadius(20)
+        .clipped()
         .onAppear {
-            if let lat = model.school.latitude, let lon = model.school.longitude {
+            // Setup map region if coords exist
+            if let lat = school.latitude, let lon = school.longitude {
                 mapRegion = MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)),
+                    center: CLLocationCoordinate2D(latitude: CLLocationDegrees(lat), longitude: CLLocationDegrees(lon)),
                     span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
                 )
             }
         }
-    }
-}
-
-
-struct TagView: View {
-    let text: String
-    let backgroundColor: Color
-
-    var body: some View {
-        Text(text)
-            .font(Font.custom("Plus Jakarta Sans Medium", size: 12))
-            .foregroundColor(Color.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(backgroundColor)
-            .cornerRadius(8)
     }
 }
 
