@@ -15,7 +15,6 @@ struct ExploreCard: View {
         let id = UUID()
         let school: School
         var swipeDirection: SwipeDirection = .none
-
     }
 
     var model: Model
@@ -26,30 +25,13 @@ struct ExploreCard: View {
     @State private var mapRegion: MKCoordinateRegion?
     @State private var isLoadingMap = true
 
-    // Fetch the map region using geocoding
-    private func fetchMapRegion(for location: String) {
-        LocationUtils.fetchCoordinates(for: location) { result in
-            switch result {
-            case .success(let coordinate):
-                DispatchQueue.main.async {
-                    self.mapRegion = MKCoordinateRegion(
-                        center: coordinate,
-                        span: MKCoordinateSpan(
-                            latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    )
-                }
-            case .failure(let error):
-                print(
-                    "Error fetching coordinates: \(error.localizedDescription)")
-            }
-        }
-    }
+    var onSwipe: (SwipeDirection) -> Void
+
 
     var body: some View {
         ZStack {
             // Background Image
             if let region = mapRegion {
-                // Apple Map background
                 Map(coordinateRegion: .constant(region))
                     .cornerRadius(20)
                     .overlay(
@@ -60,7 +42,6 @@ struct ExploreCard: View {
                         )
                     )
             } else {
-                // Placeholder while map is loading
                 Color.gray
                     .cornerRadius(20)
             }
@@ -74,22 +55,22 @@ struct ExploreCard: View {
                     StatTagList(tags: [
                         [
                             "label": "Average ACT",
-                            "stat": "\(model.school.averageSAT)",
+                            "stat": "\(model.school.actScore ?? 0)",
                             "match": "High",
                         ],
                         [
-                            "label": "Public or Private?", "stat": "",
+                            "label": "Public or Private?", "stat": "\(model.school.ownershipDescription)",
                             "match": "Med",
                         ],
-                        ["label": "Avg Aid:", "stat": "", "match": "Low"],
+                        ["label": "Avg Aid", "stat": "\(model.school.averageFinancialAid ?? 0)", "match": "Low"],
                         [
-                            "label": "Avg Tuition:",
-                            "stat": "\(model.school.coaAcademicYear)",
+                            "label": "Avg Tuition",
+                            "stat": "\(model.school.inStateTuition ?? 0)",
                             "match": "High",
                         ],
                         [
-                            "label": "Student Size:",
-                            "stat": "\(model.school.size)", "match": "High",
+                            "label": "Student Size",
+                            "stat": "\(model.school.size ?? 0))", "match": "High",
                         ],
                     ])
                     .padding(.top, 12)
@@ -97,43 +78,27 @@ struct ExploreCard: View {
                     // Main College Info
                     HStack {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(model.school.name)
-                                .font(
-                                    Font.custom(
-                                        "Plus Jakarta Sans Bold", size: 24)
-                                )
+                            Text(model.school.name ?? "Unknown School") // Fallback to "Unknown School"
+                                .font(Font.custom("Plus Jakarta Sans Bold", size: 24))
                                 .foregroundColor(Color.white)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
 
-                            Text("\(model.school.city), \(model.school.state)")
-                                .font(
-                                    Font.custom(
-                                        "Plus Jakarta Sans Medium", size: 16)
-                                )
+                            Text("\(model.school.city ?? "Unknown City"), \(model.school.state ?? "Unknown State")")
+                                .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
                                 .foregroundColor(Color.white)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         Text("A+")
-                            .font(
-                                Font.custom("Plus Jakarta Sans Bold", size: 32)
-                            )
-                            .foregroundColor(
-                                Color(
-                                    red: 2 / 255, green: 255 / 255,
-                                    blue: 127 / 255)
-                            )
+                            .font(Font.custom("Plus Jakarta Sans Bold", size: 32))
+                            .foregroundColor(Color.green)
                             .frame(alignment: .trailing)
                     }
 
                     // Action Buttons
                     ActionButtons(
-                        onDislike: { print("Dislike button tapped") },
+                        onDislike: { onSwipe(.left) },
                         onReverse: { print("Reverse button tapped") },
-                        onLike: { print("Like button tapped") }
+                        onLike: { onSwipe(.right) }
                     )
                     .padding(.bottom, 24)
                 }
@@ -155,8 +120,29 @@ struct ExploreCard: View {
         .frame(width: 361, height: 616)
         .cornerRadius(20)
         .onAppear {
-            fetchMapRegion(for: "\(model.school.city), \(model.school.state)")
+            if let lat = model.school.latitude, let lon = model.school.longitude {
+                mapRegion = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)),
+                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                )
+            }
         }
+    }
+}
+
+
+struct TagView: View {
+    let text: String
+    let backgroundColor: Color
+
+    var body: some View {
+        Text(text)
+            .font(Font.custom("Plus Jakarta Sans Medium", size: 12))
+            .foregroundColor(Color.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(backgroundColor)
+            .cornerRadius(8)
     }
 }
 
@@ -178,22 +164,5 @@ struct BlurView: UIViewRepresentable {
             overlayView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             uiView.contentView.addSubview(overlayView)
         }
-    }
-}
-
-struct ExploreCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ExploreCard(
-            model: ExploreCard.Model(
-                school: School(
-                    id: 1, name: "University of Nebraska-Lincoln",
-                    city: "Lincoln", state: "NE", size: 5000, averageSAT: 1200,
-                    coaAcademicYear: 2025)
-            ),
-            dragOffset: .zero,
-            isTopCard: true,
-            isSecondCard: false
-        )
-        .preferredColorScheme(.dark)
     }
 }

@@ -15,7 +15,7 @@
 import SwiftUI
 
 struct SchoolsListView: View {
-    @State private var schools: [School] = []
+    @State private var schools: [SchoolAPI] = []
     @State private var searchQuery: String = ""
     @State private var isLoading = false
     @State private var errorMessage: String?

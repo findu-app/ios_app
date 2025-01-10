@@ -1,100 +1,89 @@
-//
-//  SwipeableCardsView.swift
-//  ios_app
-//
-//  Created by Wilson Overfield on 1/7/25.
-//
-
-
 import SwiftUI
 
 struct SwipeableCards: View {
     class Model: ObservableObject {
-        private var originalCards: [ExploreCard.Model]
-        @Published var unswipedCards: [ExploreCard.Model]
+        @Published var cards: [ExploreCard.Model]
         @Published var swipedCards: [ExploreCard.Model]
-        
+
         init(cards: [ExploreCard.Model]) {
-            self.originalCards = cards
-            self.unswipedCards = cards
+            self.cards = cards
             self.swipedCards = []
         }
-        
+
         func removeTopCard() {
-            if !unswipedCards.isEmpty {
-                guard let card = unswipedCards.first else { return }
-                unswipedCards.removeFirst()
+            if !cards.isEmpty {
+                guard let card = cards.first else { return }
+                cards.removeFirst()
                 swipedCards.append(card)
             }
         }
-        
+
         func updateTopCardSwipeDirection(_ direction: ExploreCard.SwipeDirection) {
-            if !unswipedCards.isEmpty {
-                unswipedCards[0].swipeDirection = direction
+            if !cards.isEmpty {
+                cards[0].swipeDirection = direction
             }
         }
-        
-        func reset() {
-            unswipedCards = originalCards
-            swipedCards = []
+
+        func appendCards(newCards: [ExploreCard.Model]) {
+            cards.append(contentsOf: newCards)
         }
     }
-    
+
     @ObservedObject var model: Model
     @State private var dragState = CGSize.zero
     @State private var cardRotation: Double = 0
-    
+
     private let swipeThreshold: CGFloat = 100.0
     private let rotationFactor: Double = 35.0
-    
-    var action: (Model) -> Void
-    
+
+    var loadMoreCards: () -> Void
+
     var body: some View {
         GeometryReader { geometry in
-            if model.unswipedCards.isEmpty && model.swipedCards.isEmpty {
+            if model.cards.isEmpty && model.swipedCards.isEmpty {
                 emptyCardsView
                     .frame(width: geometry.size.width, height: geometry.size.height)
-            } else if model.unswipedCards.isEmpty {
+            } else if model.cards.isEmpty {
                 swipingCompletionView
                     .frame(width: geometry.size.width, height: geometry.size.height)
             } else {
                 ZStack {
-                    ForEach(model.unswipedCards.reversed()) { card in
-                        let isTop = card == model.unswipedCards.first
-                        let isSecond = card == model.unswipedCards.dropFirst().first
-                        
+                    ForEach(model.cards.reversed()) { card in
+                        let isTop = card == model.cards.first
+                        let isSecond = card == model.cards.dropFirst().first
+
                         ExploreCard(
                             model: card,
-                            dragOffset: dragState,
+                            dragOffset: isTop ? dragState : .zero,
                             isTopCard: isTop,
-                            isSecondCard: isSecond
+                            isSecondCard: isSecond,
+                            onSwipe: { direction in
+                                handleSwipe(direction: direction)
+                            }
                         )
                         .offset(x: isTop ? dragState.width : 0)
                         .rotationEffect(.degrees(isTop ? Double(dragState.width) / rotationFactor : 0))
-                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                        
+                        .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.7) // Adjust card size
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2 // Center card in view
+                        )
                         .gesture(
                             DragGesture()
                                 .onChanged { gesture in
-                                    self.dragState = gesture.translation
-                                    self.cardRotation = Double(gesture.translation.width) / rotationFactor
+                                    if isTop {
+                                        dragState = gesture.translation
+                                        cardRotation = Double(gesture.translation.width) / rotationFactor
+                                    }
                                 }
                                 .onEnded { _ in
-                                    if abs(self.dragState.width) > swipeThreshold {
-                                        let swipeDirection: ExploreCard.SwipeDirection = self.dragState.width > 0 ? .right : .left
-                                        model.updateTopCardSwipeDirection(swipeDirection)
-                                        
-                                        withAnimation(.easeOut(duration: 0.5)) {
-                                            self.dragState.width = self.dragState.width > 0 ? 1000 : -1000
-                                        }
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                            self.model.removeTopCard()
-                                            self.dragState = .zero
-                                        }
+                                    if isTop && abs(dragState.width) > swipeThreshold {
+                                        let swipeDirection: ExploreCard.SwipeDirection = dragState.width > 0 ? .right : .left
+                                        handleSwipe(direction: swipeDirection)
                                     } else {
                                         withAnimation(.spring()) {
-                                            self.dragState = .zero
-                                            self.cardRotation = 0
+                                            dragState = .zero
+                                            cardRotation = 0
                                         }
                                     }
                                 }
@@ -105,7 +94,24 @@ struct SwipeableCards: View {
             }
         }
     }
-    
+
+    private func handleSwipe(direction: ExploreCard.SwipeDirection) {
+        guard !model.cards.isEmpty else { return }
+        model.updateTopCardSwipeDirection(direction)
+
+        withAnimation(.easeOut(duration: 0.5)) {
+            dragState.width = direction == .right ? 1000 : -1000
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            model.removeTopCard()
+            dragState = .zero
+            if model.cards.count == 5 {
+                loadMoreCards()
+            }
+        }
+    }
+
     var emptyCardsView: some View {
         VStack {
             Text("No Cards")
@@ -114,17 +120,17 @@ struct SwipeableCards: View {
                 .foregroundStyle(.gray)
         }
     }
-    
+
     var swipingCompletionView: some View {
         VStack {
             Text("Finished Swiping")
                 .font(.title)
                 .padding(.bottom, 20)
-            
+
             Button(action: {
-                action(model)
+                loadMoreCards()
             }) {
-                Text("Reset")
+                Text("Load More")
                     .font(.headline)
                     .frame(width: 200, height: 50)
                     .background(Color.accentColor)

@@ -26,7 +26,7 @@ struct HomeHeader: View {
         }
         .padding(.horizontal)
         .padding(.bottom)
-        .background(Color("surface"))
+        .background(Color("Surface"))
         
         Divider()
             .frame(height: 1)

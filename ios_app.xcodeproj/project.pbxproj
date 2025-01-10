@@ -28,6 +28,11 @@
 			path = ios_app;
 			sourceTree = "<group>";
 		};
+		EFA709472D30543E00CCB1AA /* supabase */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = supabase;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +58,7 @@
 		D28890DF2D1DC12E00F95263 = {
 			isa = PBXGroup;
 			children = (
+				EFA709472D30543E00CCB1AA /* supabase */,
 				D28890EA2D1DC12E00F95263 /* ios_app */,
 				D28890E92D1DC12E00F95263 /* Products */,
 			);
@@ -83,6 +89,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D28890EA2D1DC12E00F95263 /* ios_app */,
+				EFA709472D30543E00CCB1AA /* supabase */,
 			);
 			name = ios_app;
 			packageProductDependencies = (

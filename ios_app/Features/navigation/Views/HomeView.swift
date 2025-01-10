@@ -32,7 +32,7 @@ struct HomeView: View {
             HomeNavBar(selectedTab: $selectedTab)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .background(Color("surface"))
+        .background(Color("Surface"))
     }
 }
 
