@@ -10,6 +10,10 @@ import SwiftUI
 struct ExploreView: View {
 
     var body: some View {
-        SwipeableCardsView() // Pass the student ID to SwipeableCardsView
+        SwipeableCardsView()
     }
+}
+
+#Preview {
+    ExploreView()
 }

@@ -25,3 +25,7 @@ struct SectionTitle: View {
         }
     }
 }
+
+#Preview {
+    SectionTitle(title: "Title", matchScore: "100")
+}

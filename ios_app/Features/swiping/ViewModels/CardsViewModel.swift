@@ -99,13 +99,9 @@ class CardsViewModel: ObservableObject {
     }
 
     func undoSwipe() {
-        guard let lastSwiped = swipedHistory.popLast() else {
-            return
-        }
-
-        // Remove the school from swiped IDs and insert it back into the schools list
+        guard let lastSwiped = swipedHistory.popLast() else { return }
         swipedSchoolIDs.remove(lastSwiped.id)
         schools.insert(lastSwiped, at: 0)
+        print("Undo swipe for: \(lastSwiped.name)")
     }
-
 }

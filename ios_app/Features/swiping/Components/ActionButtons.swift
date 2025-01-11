@@ -18,8 +18,9 @@ struct ActionButtons: View {
                 Image(systemName: "xmark")
                     .resizable()
                     .scaledToFit()
+                    .fontWeight(.semibold)
                     .frame(width: 30)
-                    .foregroundColor(Color("Primary"))
+                    .foregroundColor(Color("OnDislike"))
             }
 
             Spacer()
@@ -28,8 +29,9 @@ struct ActionButtons: View {
                 Image(systemName: "arrow.counterclockwise")
                     .resizable()
                     .scaledToFit()
+                    .fontWeight(.semibold)
                     .frame(width: 30)
-                    .foregroundColor(Color.white)
+                    .foregroundColor(Color("OnReverse"))
             }
 
             Spacer()
@@ -38,8 +40,10 @@ struct ActionButtons: View {
                 Image(systemName: "heart.fill")
                     .resizable()
                     .scaledToFit()
+                    .fontWeight(.semibold)
                     .frame(width: 30)
-                    .foregroundColor(Color(red: 2/255, green: 255/255, blue: 127/255))
+                    .foregroundColor(
+                        Color("OnLike"))
             }
         }
         .frame(maxWidth: .infinity)

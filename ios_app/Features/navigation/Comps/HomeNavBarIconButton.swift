@@ -15,9 +15,12 @@ struct HomeNavBarIconButton: View {
     let action: () -> Void
 
     var body: some View {
-        VStack {
-            Image(systemName: icon)
-                .font(.title)
+        VStack (spacing: 4) {
+            Image(systemName: isSelected ? "\(icon).fill" : icon)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 20)
+            
             Text(label)
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 9))
         }

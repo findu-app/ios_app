@@ -24,7 +24,7 @@ struct HomeNavBar: View {
             }
 
             HomeNavBarIconButton(
-                icon: "safari.fill",
+                icon: "safari",
                 label: "Explore",
                 isSelected: selectedTab == .explore
             ) {
@@ -32,7 +32,7 @@ struct HomeNavBar: View {
             }
 
             HomeNavBarIconButton(
-                icon: "gear",
+                icon: "gearshape",
                 label: "Settings",
                 isSelected: selectedTab == .settings
             ) {
@@ -40,7 +40,7 @@ struct HomeNavBar: View {
             }
         }
         .padding()
-        .padding(.bottom, 29)
+        .padding(.bottom, 20) //Added to offset the bottom spacing
         .background(Color("Surface"))
     }
 }

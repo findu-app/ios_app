@@ -9,9 +9,9 @@ struct SwipeableCardsView: View {
 
     private let swipeThreshold: CGFloat = 100.0
     private let rotationFactor: Double = 35.0
+    private let maxVisibleCards = 2 // Limit the number of visible cards
 
     init() {
-        // Initialize the viewModel with the global state
         let globalState = GlobalStudentDataState()
         _viewModel = StateObject(wrappedValue: CardsViewModel(globalStudentState: globalState))
     }
@@ -26,18 +26,12 @@ struct SwipeableCardsView: View {
                     .padding()
             } else {
                 ZStack {
-                    ForEach(viewModel.schools.reversed()) { school in
+                    ForEach(viewModel.schools.prefix(maxVisibleCards).reversed()) { school in
                         CardView(
                             school: school,
                             matchScore: viewModel.matchScore(for: school),
                             onSwipe: { direction in
-                                flingOffScreen(direction)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    Task {
-                                        await viewModel.handleSwipe(direction: direction)
-                                    }
-                                    resetDrag()
-                                }
+                                handleSwipeAction(direction: direction)
                             },
                             onReverse: {
                                 withAnimation {
@@ -59,13 +53,7 @@ struct SwipeableCardsView: View {
                                     if viewModel.isTopSchool(school), abs(dragState.width) > swipeThreshold {
                                         let direction: CardSwipeDirection =
                                             (dragState.width > 0) ? .right : .left
-                                        flingOffScreen(direction)
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                            Task {
-                                                await viewModel.handleSwipe(direction: direction)
-                                            }
-                                            resetDrag()
-                                        }
+                                        handleSwipeAction(direction: direction)
                                     } else {
                                         withAnimation(.spring()) {
                                             resetDrag()
@@ -85,9 +73,16 @@ struct SwipeableCardsView: View {
         }
     }
 
-    private func flingOffScreen(_ direction: CardSwipeDirection) {
-        withAnimation(.easeOut(duration: 0.5)) {
+    private func handleSwipeAction(direction: CardSwipeDirection) {
+        withAnimation(.easeOut(duration: 1)) {
             dragState.width = (direction == .right) ? 1000 : -1000
+            cardRotation = (direction == .right) ? rotationFactor : -rotationFactor
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            Task {
+                await viewModel.handleSwipe(direction: direction)
+            }
+            resetDrag()
         }
     }
 
