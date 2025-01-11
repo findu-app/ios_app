@@ -5,7 +5,6 @@
 //  Created by Kenny Morales on 1/10/25.
 //
 
-
 import Foundation
 
 struct CardModel: Identifiable, Equatable {
@@ -15,5 +14,5 @@ struct CardModel: Identifiable, Equatable {
 }
 
 enum CardSwipeDirection {
-    case left, right
+    case left, right, up
 }

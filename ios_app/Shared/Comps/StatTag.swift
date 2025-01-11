@@ -31,7 +31,7 @@ struct StatTag: View {
         switch match {
         case "High":
             return Color("High-BG")
-        case "Med":
+        case "Medium":
             return Color("Med-BG")
         case "Low":
             return Color("Low-BG")
@@ -50,7 +50,7 @@ struct StatTag: View {
         switch match {
         case "Low":
             return Color("Low-FG")
-        case "Med":
+        case "Medium":
             return Color("Med-FG")
         case "High":
             return Color("High-FG")

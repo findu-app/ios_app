@@ -5,7 +5,6 @@
 //  Created by Kenny Morales on 1/11/25.
 //
 
-
 import Foundation
 import MapKit
 
@@ -13,17 +12,22 @@ class CardViewModel: ObservableObject {
     @Published var mapRegion: MKCoordinateRegion?
     @Published var isLoadingMap = true
     let school: School
+    let studentMatch: StudentSchoolMatch // Store the full match object
 
-    init(school: School) {
+    init(school: School, studentMatch: StudentSchoolMatch) {
         self.school = school
+        self.studentMatch = studentMatch
         setupMapRegion()
     }
 
-    /// Configures the map region based on the school's latitude and longitude
     private func setupMapRegion() {
-        guard let lat = school.latitude, let lon = school.longitude else { return }
+        guard let lat = school.latitude, let lon = school.longitude else {
+            return
+        }
         mapRegion = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: CLLocationDegrees(lat), longitude: CLLocationDegrees(lon)),
+            center: CLLocationCoordinate2D(
+                latitude: CLLocationDegrees(lat),
+                longitude: CLLocationDegrees(lon)),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -34,17 +38,25 @@ class CardViewModel: ObservableObject {
             [
                 "label": "Average ACT",
                 "stat": school.actScore != nil ? "\(school.actScore!)" : "N/A",
-                "match": "High",
+                "match": studentMatch.actScoreMatch
             ],
             [
-                "label": "Avg Aid",
-                "stat": school.averageFinancialAid != nil ? "\(school.averageFinancialAid!)" : "N/A",
-                "match": "Low",
+                "label": "Avg Debt",
+                "stat": school.averageDebt != nil
+                    ? "\(school.averageDebt!)" : "N/A",
+                "match": studentMatch.averageDebt4YearMatch
             ],
             [
                 "label": "Avg Tuition",
-                "stat": school.inStateTuition != nil ? "\(school.inStateTuition!)" : "N/A",
-                "match": "High",
+                "stat": school.inStateTuition != nil
+                    ? "\(school.inStateTuition!)" : "N/A",
+                "match": studentMatch.inStateTutionMatch
+            ],
+            [
+                "label": "Graduation Rate",
+                "stat": school.fourYearGradRate != nil
+                    ? "\(Int(school.fourYearGradRate! * 100))%" : "N/A",
+                "match": studentMatch.fourYearGradRateMatch
             ]
         ]
     }

@@ -3,19 +3,27 @@ import SwiftUI
 
 struct CardView: View {
     @StateObject private var viewModel: CardViewModel
+    @State private var isDragging = false  // Tracks swipe activity
     let matchScore: String
     let onSwipe: (CardSwipeDirection) -> Void
     let onReverse: () -> Void
+    let onOpenInfo: (School) -> Void  // Closure to open college info
+    let studentMatch: StudentSchoolMatch  // Add this property
 
     init(
-        school: School, matchScore: String,
+        school: School,
+        matchScore: String,
         onSwipe: @escaping (CardSwipeDirection) -> Void,
-        onReverse: @escaping () -> Void
+        onReverse: @escaping () -> Void,
+        onOpenInfo: @escaping (School) -> Void,
+        studentMatch: StudentSchoolMatch
     ) {
-        _viewModel = StateObject(wrappedValue: CardViewModel(school: school))
+        _viewModel = StateObject(wrappedValue: CardViewModel(school: school, studentMatch: studentMatch))
         self.matchScore = matchScore
         self.onSwipe = onSwipe
         self.onReverse = onReverse
+        self.onOpenInfo = onOpenInfo
+        self.studentMatch = studentMatch
     }
 
     var body: some View {
@@ -36,13 +44,10 @@ struct CardView: View {
                 Color.gray
                     .cornerRadius(20)
             }
-
             VStack {
                 Spacer()
-
                 // Card Info & Action Buttons
                 VStack(alignment: .leading, spacing: 12) {
-                    // TODO: Change to individual tags with Public/Private being at top because it is subject to change
                     StatTagList(tags: viewModel.statTags())
 
                     // Main College Info
@@ -54,8 +59,8 @@ struct CardView: View {
                                         "Plus Jakarta Sans Bold", size: 24)
                                 )
                                 .foregroundColor(Color("AllWhite"))
-                                .lineLimit(2)  // Allow up to 2 lines
-                                .multilineTextAlignment(.leading)  // Align text to the left
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
                             Spacer()
                             VStack {
@@ -64,14 +69,14 @@ struct CardView: View {
                                         Font.custom(
                                             "Plus Jakarta Sans Bold", size: 30)
                                     )
-                                    .foregroundColor(Color("OnLike"))//TODO: Update this
+                                    .foregroundColor(Color("OnLike"))
                                 Text("Match")
                                     .font(
                                         Font.custom(
                                             "Plus Jakarta Sans SemiBold",
                                             size: 12)
                                     )
-                                    .foregroundColor(Color("OnLike"))//TODO: Update this
+                                    .foregroundColor(Color("OnLike"))
                             }
                         }
                         Text(viewModel.formattedLocation())
@@ -80,7 +85,6 @@ struct CardView: View {
                                     "Plus Jakarta Sans Medium", size: 16)
                             )
                             .foregroundColor(.white)
-
                     }
 
                     // Action Buttons: Call the closure on swipe
@@ -89,13 +93,34 @@ struct CardView: View {
                         onReverse: onReverse,
                         onLike: { onSwipe(.right) }
                     )
+
+                    // Info Button
+                    Button(action: {
+                        onOpenInfo(viewModel.school)  // Trigger the info action
+                    }) {
+                        Text("View Info")
+                            .font(
+                                Font.custom(
+                                    "Plus Jakarta Sans SemiBold", size: 14)
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.black.opacity(0.25))
+                            .foregroundColor(.white)
+                            .cornerRadius(50)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 100)
+                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+                    .padding(.top, 8)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 24)
                 .frame(maxWidth: .infinity)
                 .background(
                     ZStack {
-                        Color.black.opacity(0.4)
+                        Color.black.opacity(0.3)
                             .blur(radius: 10)
                             .cornerRadius(8)
                             .background(
@@ -104,11 +129,20 @@ struct CardView: View {
                     }
                 )
                 .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 2)
+                )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
+
             }
         }
         .cornerRadius(20)
         .clipped()
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color("Border"), lineWidth: 2)
+        )
     }
 }

@@ -21,8 +21,8 @@ struct BlurView: UIViewRepresentable {
 
     /// Updates the `UIVisualEffectView` if the blur style changes
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-            if let effect = uiView.effect as? UIBlurEffect {
-                uiView.alpha = CGFloat(blurRadius / 10)
-            }
+        if uiView.effect is UIBlurEffect {
+            uiView.alpha = CGFloat(blurRadius / 10)
         }
+    }
 }

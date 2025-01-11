@@ -1,156 +1,305 @@
+// MatchScoreCalculator.swift
+// ios_app
 //
-//  MatchScoreCalculator.swift
-//  ios_app
-//
-//  Created by Kenny Morales on 1/10/25.
-//
-
+// Created by Kenny Morales on 1/10/25.
 
 import Foundation
 
-/// Utility to compute match scores between a school and a student profile
+/// Utility to compute match scores between a school and a student profile.
 struct MatchScoreCalculator {
-    
-    /// Computes the overall match score by calculating individual scores for each section
+
+    /// Computes the overall match score by calculating individual section scores.
     /// - Parameters:
-    ///   - school: The `School` object
-    ///   - student: The `StudentInfo` object
-    /// - Returns: A string representing the combined match grade
-    static func computeMatchScore(for school: School, student: StudentInfo) -> String {
-        var sectionScores: [String] = []
-        
-        print(school.name)
+    ///   - school: The `School` object.
+    ///   - student: The `StudentInfo` object.
+    /// - Returns: A `StudentSchoolMatch` object containing all match details.
+    static func computeMatchScore(for school: School, student: StudentInfo)
+        -> StudentSchoolMatch
+    {
+        // Calculate detailed matches for each section
+        let costDetails = calculateCostDetails(for: school)
+        let admissionsDetails = calculateAdmissionsDetails(
+            for: school, student: student)
+        let academicDetails = calculateAcademicsDetails(for: school)
+        let campusDetails = calculateCampusDetails(for: school)
+        let outcomesDetails = calculateOutcomesDetails(for: school)
 
-        // Costs Section
-        let costScore = calculateCostMatch(for: school, student: student)
-        sectionScores.append(costScore)
-        print("Cost Match Score: \(costScore)")
+        let costScore = calculateOverallGrade(from: [
+            costDetails.averageDebt4YearMatch,
+            costDetails.averageNetPricePublic,
+            costDetails.averageNetPricePrivate,
+            costDetails.inStateTuitionMatch,
+            costDetails.outStateTuitionMatch,
+            costDetails.coaAcademicYearMatch,
+            costDetails.coaAcademicYearMatch,
+        ])
 
-        // Academics Section
-        let academicsScore = calculateAcademicsMatch(for: school, student: student)
-        sectionScores.append(academicsScore)
-        print("Academics Match Score: \(academicsScore)")
+        let admissionScore = calculateOverallGrade(from: [
+            admissionsDetails.actScoreMatch,
+            admissionsDetails.satScoreMatch,
+            admissionsDetails.admissionsRateMatch,
+        ])
 
-        // Admissions Section
-        let admissionsScore = calculateAdmissionsMatch(for: school, student: student)
-        sectionScores.append(admissionsScore)
-        print("Admissions Match Score: \(admissionsScore)")
+        let academicScore = calculateOverallGrade(from: [
+            academicDetails
+        ])
 
-        // Campus Section
-        let campusScore = calculateCampusMatch(for: school, student: student)
-        sectionScores.append(campusScore)
-        print("Campus Match Score: \(campusScore)")
+        let campusScore = calculateOverallGrade(from: [
+            campusDetails
+        ])
 
-        // Outcomes Section
-        let outcomesScore = calculateOutcomesMatch(for: school, student: student)
-        sectionScores.append(outcomesScore)
-        print("Outcomes Match Score: \(outcomesScore)")
+        let outcomesScore = calculateOverallGrade(from: [
+            outcomesDetails.gradRateMatch,
+            outcomesDetails.percentEarningMoreThanHSGradMatch,
+            outcomesDetails.workingNotEnrolledMatch,
+        ])
 
-        // Combine Section Scores into an Overall Grade
-        let overallScore = calculateOverallGrade(from: sectionScores)
-        print("Overall Match Score: \(overallScore)")
-        print("")
+        // Compute overall match score
+        let overallMatch = calculateOverallGrade(from: [
+            mapToGrade(costDetails.averageDebt4YearMatch),
+            mapToGrade(costDetails.averageNetPricePublic),
+            mapToGrade(costDetails.averageNetPricePrivate),
+            mapToGrade(costDetails.inStateTuitionMatch),
+            mapToGrade(costDetails.outStateTuitionMatch),
+            mapToGrade(costDetails.coaAcademicYearMatch),
+            mapToGrade(admissionsDetails.actScoreMatch),
+            mapToGrade(admissionsDetails.satScoreMatch),
+            mapToGrade(admissionsDetails.admissionsRateMatch),
+            mapToGrade(academicScore),
+            mapToGrade(campusScore),
+            mapToGrade(outcomesDetails.gradRateMatch),
+            mapToGrade(outcomesDetails.percentEarningMoreThanHSGradMatch),
+            mapToGrade(outcomesDetails.workingNotEnrolledMatch),
+        ])
 
-        return overallScore
+        // Create the StudentSchoolMatch object
+        let match = StudentSchoolMatch(
+            id: UUID(),
+            studentId: UUID(uuidString: student.id) ?? UUID(),
+            schoolId: school.id,
+            costScore: costScore,
+            academicScore: academicScore,
+            admissionScore: admissionScore,
+            campusScore: campusScore,
+            outcomesScore: outcomesScore,
+            matchScore: overallMatch,
+            averageDebt4YearMatch: costDetails.averageDebt4YearMatch,
+            averageNetPricePublic: costDetails.averageNetPricePublic,
+            averageNetPricePrivate: costDetails.averageNetPricePrivate,
+            inStateTutionMatch: costDetails.inStateTuitionMatch,
+            outStateTutionMatch: costDetails.outStateTuitionMatch,
+            coaAcademicYearMatch: costDetails.coaAcademicYearMatch,
+            carnegieMatch: "N/A",
+            studentToFacultyRatioMatch: academicDetails,
+            areasofStudyMatch: "N/A",
+            actScoreMatch: admissionsDetails.actScoreMatch,
+            satScoreMatch: admissionsDetails.satScoreMatch,
+            admissionsRateMatch: admissionsDetails.admissionsRateMatch,
+            sizeMatch: campusDetails,
+            localeMatch: "N/A",
+            religiousAffiliationMatch: "N/A",
+            menMatch: "N/A",
+            womenMatch: "N/A",
+            fourYearGradRateMatch: outcomesDetails.gradRateMatch,
+            fourYearRetentionRateMatch: "N/A",
+            lessThanFourYearRetentionRateMatch: "Medium",
+            percentEarningMoreThanHSGradMatch: outcomesDetails
+                .percentEarningMoreThanHSGradMatch,
+            notWorkingNotEnrolledMatch: outcomesDetails.workingNotEnrolledMatch,
+            workingNotEnrolledMatch: "N/A"
+        )
+
+        // Print all match details with actual stats
+        print(
+            """
+            ============================================
+            Match Results for School: \(school.name ?? "Unknown School")
+            --------------------------------------------
+            Overall Match Score: \(match.matchScore)
+
+            Cost Details:
+              - Cost Score: \(match.costScore)
+              - Average Debt 4-Year: \(school.averageDebt ?? 0) → \(match.averageDebt4YearMatch)
+              - In-State Tuition: \(school.inStateTuition ?? 0) → \(match.inStateTutionMatch)
+              - Out-State Tuition: \(school.outStateTuition ?? 0) → \(match.outStateTutionMatch)
+              - COA Academic Year: \(school.coaAcademicYear ?? 0) → \(match.coaAcademicYearMatch)
+              - Average Net Price Public: \(school.averageNetPricePublic ?? 0) → \(match.averageNetPricePublic)
+              - Average Net Price Private: \(school.averageNetPricePrivate ?? 0) → \(match.averageNetPricePrivate)
+
+            Admissions Details:
+              - Admission Score: \(match.admissionScore)
+              - ACT Score: \(school.actScore ?? 0) → \(match.actScoreMatch)
+              - SAT Score: \(school.satScore ?? 0) → \(match.satScoreMatch)
+              - Admissions Rate: \(school.admissionsRate ?? 0.0) → \(match.admissionsRateMatch)
+
+            Academic Details:
+              - Academic Score: \(match.academicScore)
+              - Student-to-Faculty Ratio: \(school.studentToFacultyRatio ?? 0) → \(match.studentToFacultyRatioMatch)
+              - Areas of Study Match: \(match.areasofStudyMatch)
+
+            Campus Details:
+              - Campus Score: \(match.campusScore)
+              - Campus Size: \(school.size ?? 0) → \(match.sizeMatch)
+              - Locale Match: \(match.localeMatch)
+              - Religious Affiliation Match: \(match.religiousAffiliationMatch)
+
+            Outcomes Details:
+              - Outcomes Score: \(match.outcomesScore)
+              - Graduation Rate: \(school.fourYearGradRate ?? 0.0) → \(match.fourYearGradRateMatch)
+              - Percent Earning More Than HS Grad: \(school.percentEarningMoreThanHSGrad ?? 0.0) → \(match.percentEarningMoreThanHSGradMatch)
+            - Working Not Enrolled: \(String(format: "%.2f", school.workingNotEnrolled ?? 0.0)) → \(match.workingNotEnrolledMatch)
+
+            ============================================
+            """
+        )
+
+        return match
     }
 
-    // MARK: - Individual Section Match Calculations
-
-    private static func calculateCostMatch(for school: School, student: StudentInfo) -> String {
-        guard let inStateTuition = school.inStateTuition, let outStateTuition = school.outStateTuition else {
-            return "C"
-        }
-        // Example logic for matching costs (adjust as needed)
-        let diff = abs(inStateTuition - outStateTuition)
-        switch diff {
-        case 0...5000:
-            return "A"
-        case 5001...10000:
-            return "B"
-        default:
-            return "C"
-        }
+    private static func calculateCostDetails(for school: School) -> (
+        averageDebt4YearMatch: String,
+        inStateTuitionMatch: String,
+        outStateTuitionMatch: String,
+        coaAcademicYearMatch: String,
+        averageNetPricePublic: String,
+        averageNetPricePrivate: String
+    ) {
+        return (
+            averageDebt4YearMatch: Classify.classifyAverageDebt(
+                school.averageDebt),
+            inStateTuitionMatch: Classify.classifyInStateTuition(
+                school.inStateTuition),
+            outStateTuitionMatch: Classify.classifyOutStateTuition(
+                school.outStateTuition),
+            coaAcademicYearMatch: Classify.classifyCOAAcademicYear(
+                school.coaAcademicYear.map(Float.init)),
+            averageNetPricePublic: Classify.classifyNetPricePublic(
+                school.averageNetPricePublic.map(Float.init)),
+            averageNetPricePrivate: Classify.classifyNetPricePrivate(
+                school.averageNetPricePrivate.map(Float.init))
+        )
     }
 
-    private static func calculateAcademicsMatch(for school: School, student: StudentInfo) -> String {
-        guard let studentToFacultyRatio = school.studentToFacultyRatio else {
-            return "C"
-        }
-        // Example logic for matching academics
-        switch studentToFacultyRatio {
-        case 0..<10:
-            return "A"
-        case 10..<20:
-            return "B"
-        default:
-            return "C"
-        }
+    private static func calculateAdmissionsDetails(
+        for school: School, student: StudentInfo
+    ) -> (
+        actScoreMatch: String,
+        satScoreMatch: String,
+        admissionsRateMatch: String
+    ) {
+        let actScoreMatch = Classify.classifyACTScore(
+            actual: student.actScore.map(Float.init),
+            target: school.actScore
+        )
+        let satScoreMatch = Classify.classifySATScore(
+            actual: student.satScore.map(Float.init),
+            target: school.satScore
+        )
+        let admissionsRateMatch = Classify.classifyAdmissionsRate(
+            school.admissionsRate)
+
+        return (actScoreMatch, satScoreMatch, admissionsRateMatch)
     }
 
-    private static func calculateAdmissionsMatch(for school: School, student: StudentInfo) -> String {
-        guard let sACT = school.actScore, let stACT = student.actScore else {
-            return "C"
-        }
-        // Matching based on ACT scores
-        let diff = abs(Double(stACT) - Double(sACT))
-        switch diff {
-        case 0...2:
-            return "A"
-        case 3...5:
-            return "B"
-        default:
-            return "C"
-        }
+    private static func calculateAcademicsDetails(for school: School) -> String
+    {
+        return Classify.classifyStudentFacultyRatio(
+            school.studentToFacultyRatio)
     }
 
-    private static func calculateCampusMatch(for school: School, student: StudentInfo) -> String {
-        guard let size = school.size else {
-            return "C"
-        }
-        // Example logic for campus size match
-        switch size {
-        case 0..<5000:
-            return "A"
-        case 5000..<15000:
-            return "B"
-        default:
-            return "C"
-        }
+    private static func calculateCampusDetails(for school: School) -> String {
+        return Classify.classifyCampusSize(school.size.map(Float.init))
     }
 
-    private static func calculateOutcomesMatch(for school: School, student: StudentInfo) -> String {
-        guard let gradRate = school.fourYearGradRate else {
-            return "C"
-        }
-        // Example logic for outcomes
-        switch gradRate {
-        case 0.75...1.0:
-            return "A"
-        case 0.5..<0.75:
-            return "B"
-        default:
-            return "C"
-        }
+    private static func calculateOutcomesDetails(for school: School) -> (
+        gradRateMatch: String,
+        percentEarningMoreThanHSGradMatch: String,
+        workingNotEnrolledMatch: String
+    ) {
+        let gradRateMatch = Classify.classifyGradRate(school.fourYearGradRate)
+        let percentEarningMoreThanHSGradMatch = Classify.classifyEarningMore(
+            school.percentEarningMoreThanHSGrad)
+        let workingNotEnrolledMatch = Classify.classifyWorkingNotEnrolled(
+            school.workingNotEnrolled.map(Float.init))
+
+        return (
+            gradRateMatch, percentEarningMoreThanHSGradMatch,
+            workingNotEnrolledMatch
+        )
     }
 
-    // MARK: - Combine Section Scores
+    private static func calculateOverallGrade(from sectionScores: [String])
+        -> String
+    {
+        let gradeValues: [String: Double] = [
+            "A+": 4.3, "A": 4.0, "A-": 3.7,
+            "B+": 3.3, "B": 3.0, "B-": 2.7,
+            "C+": 2.3, "C": 2.0, "C-": 1.7,
+            "Low": 2.0, "Medium": 3.0, "High": 4.0,
+        ]
 
-    private static func calculateOverallGrade(from sectionScores: [String]) -> String {
-        // Map grades to numeric values
-        let gradeValues: [String: Float] = ["A+": 4.3, "A": 4.0, "B": 3.0, "C": 2.0, "D": 1.0]
-        let numericScores = sectionScores.compactMap { gradeValues[$0] }
-        let average = numericScores.reduce(0, +) / Float(numericScores.count)
+        // Check if all scores are "N/A"
+        if sectionScores.allSatisfy({ $0 == "N/A" }) {
+            return "N/A"
+        }
 
-        // Convert average back to grade
+        // Convert section grades to numeric scores, ignoring "N/A"
+        let numericScores = sectionScores.compactMap { grade in
+            grade == "N/A" ? nil : gradeValues[grade]
+        }
+
+        // Debug log for input and valid scores
+        print(
+            "Input Scores: \(sectionScores) → Valid Numeric Scores: \(numericScores)"
+        )
+
+        // Handle the case where no valid scores exist
+        guard !numericScores.isEmpty else { return "C-" }
+
+        // Calculate the average numeric score
+        let average = numericScores.reduce(0, +) / Double(numericScores.count)
+
+        // Map the average numeric score back to a grade
         switch average {
-        case 4.0...:
-            return "A"
-        case 3.0..<4.0:
-            return "B"
-        case 2.0..<3.0:
-            return "C"
-        default:
-            return "D"
+        case 4.3...: return "A+"
+        case 4.0..<4.3: return "A"
+        case 3.7..<4.0: return "A-"
+        case 3.3..<3.7: return "B+"
+        case 3.0..<3.3: return "B"
+        case 2.7..<3.0: return "B-"
+        case 2.3..<2.7: return "C+"
+        case 2.0..<2.3: return "C"
+        case 1.7..<2.0: return "C-"
+        default: return "C-"  // Minimum grade
+        }
+    }
+
+    // MARK: - Helpers
+    private static func matchCategory(
+        _ value: Float?, thresholds: [Double], reverse: Bool = false
+    ) -> String {
+        guard let value = value.map(Double.init) else { return "N/A" }  // Convert Float? to Double
+        if reverse {
+            switch value {
+            case ..<thresholds[0]: return "High"
+            case thresholds[0]..<thresholds[1]: return "Medium"
+            default: return "Low"
+            }
+        } else {
+            switch value {
+            case ..<thresholds[0]: return "Low"
+            case thresholds[0]..<thresholds[1]: return "Medium"
+            default: return "High"
+            }
+        }
+    }
+
+    private static func mapToGrade(_ match: String) -> String {
+        switch match {
+        case "Low": return "C"
+        case "Medium": return "B"
+        case "High": return "A"
+        default: return "N/A"
         }
     }
 }

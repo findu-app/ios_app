@@ -21,6 +21,7 @@ struct ActionButtons: View {
                     .fontWeight(.semibold)
                     .frame(width: 30)
                     .foregroundColor(Color("OnDislike"))
+                    .padding(2)
             }
 
             Spacer()
@@ -32,6 +33,7 @@ struct ActionButtons: View {
                     .fontWeight(.semibold)
                     .frame(width: 30)
                     .foregroundColor(Color("OnReverse"))
+                    .padding(2)
             }
 
             Spacer()
@@ -43,7 +45,10 @@ struct ActionButtons: View {
                     .fontWeight(.semibold)
                     .frame(width: 30)
                     .foregroundColor(
-                        Color("OnLike"))
+                        Color("OnLike")
+                    )
+                    .padding(2)
+
             }
         }
         .frame(maxWidth: .infinity)
