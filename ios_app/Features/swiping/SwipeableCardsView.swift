@@ -1,18 +1,19 @@
 import SwiftUI
 
 struct SwipeableCardsView: View {
-    let studentId: UUID // Accept the studentId as a parameter
-
+    @EnvironmentObject var globalStudentState: GlobalStudentDataState
     @StateObject private var viewModel: CardsViewModel
+
     @State private var dragState = CGSize.zero
     @State private var cardRotation: Double = 0
 
-    private let swipeThreshold: CGFloat = 100.0 // Adjust threshold for swipe
+    private let swipeThreshold: CGFloat = 100.0
     private let rotationFactor: Double = 35.0
 
-    init(studentId: UUID) {
-        self.studentId = studentId
-        _viewModel = StateObject(wrappedValue: CardsViewModel(studentId: studentId)) // Initialize with studentId
+    init() {
+        // Initialize the viewModel with the global state
+        let globalState = GlobalStudentDataState()
+        _viewModel = StateObject(wrappedValue: CardsViewModel(globalStudentState: globalState))
     }
 
     var body: some View {
@@ -39,7 +40,6 @@ struct SwipeableCardsView: View {
                                 }
                             },
                             onReverse: {
-                                // Undo logic
                                 withAnimation {
                                     viewModel.undoSwipe()
                                 }
@@ -85,16 +85,12 @@ struct SwipeableCardsView: View {
         }
     }
 
-    // MARK: - Private Methods
-
-    /// Animate card off screen
     private func flingOffScreen(_ direction: CardSwipeDirection) {
         withAnimation(.easeOut(duration: 0.5)) {
             dragState.width = (direction == .right) ? 1000 : -1000
         }
     }
 
-    /// Reset drag to center
     private func resetDrag() {
         dragState = .zero
         cardRotation = 0

@@ -43,8 +43,6 @@ struct School: Decodable, Identifiable, Equatable {
     let size: Int?
     let locale: Int?
     let religiousAffiliation: Int?
-
-    // Demographics
     let white: Float?
     let black: Float?
     let hispanic: Float?
@@ -65,8 +63,6 @@ struct School: Decodable, Identifiable, Equatable {
     let fourYearRetentionRate: Float?
     let lessThanFourYearRetentionRate: Float?
     let percentEarningMoreThanHSGrad: Float?
-
-    // Employment Data
     let notWorkingNotEnrolled: Int?
     let workingNotEnrolled: Int?
 

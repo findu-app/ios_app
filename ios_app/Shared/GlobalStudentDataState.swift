@@ -20,12 +20,10 @@ class GlobalStudentDataState: ObservableObject {
         loadFromUserDefaults()
     }
 
-    /// Saves the transformed StudentInfo object to UserDefaults
     func saveStudentInfo(from studentInfo: StudentInfo) {
         self.studentInfo = studentInfo
     }
 
-    /// Encodes and saves `StudentInfo` to UserDefaults
     private func saveToUserDefaults() {
         guard let studentInfo = studentInfo else {
             UserDefaults.standard.removeObject(forKey: userDefaultsKey)
@@ -40,10 +38,8 @@ class GlobalStudentDataState: ObservableObject {
         }
     }
 
-    /// Loads `StudentInfo` from UserDefaults
     private func loadFromUserDefaults() {
-        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey)
-        else { return }
+        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey) else { return }
 
         do {
             studentInfo = try JSONDecoder().decode(StudentInfo.self, from: data)
@@ -52,3 +48,4 @@ class GlobalStudentDataState: ObservableObject {
         }
     }
 }
+

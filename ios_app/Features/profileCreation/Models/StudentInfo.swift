@@ -8,6 +8,8 @@
 import Foundation
 
 struct StudentInfo: Codable {
+    let id: String
+    let userID: String
     let name: String
     let phone: String
     let preferredContactMethod: String
@@ -38,6 +40,8 @@ struct StudentInfo: Codable {
     let ethnicity: String
 
     enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
         case name
         case phone
         case preferredContactMethod = "preferred_contact_method"
@@ -65,9 +69,11 @@ struct StudentInfo: Codable {
         case specialPrograms = "special_programs"
         case greekLifeInterest = "greek_life_interest"
         case researchInterest = "research_interest"
-        case ethnicity = "ethnicity"
+        case ethnicity
     }
 }
+
+
 
 extension StudentInfo {
     func toDatabaseModel() -> StudentInfoDatabaseModel {
@@ -87,15 +93,15 @@ extension StudentInfo {
             sat_score: satScore,
             class_rank: classRank,
             num_ap_classes: numAPClass,
-            activities: activities.map { $0 },
-            hobbies: hobbies.map { $0 },
+            activities: activities,
+            hobbies: hobbies,
             volunteer_hours: volunteerHours,
-            majors: majors.map { $0 },
+            majors: majors,
             distance_from_home: distanceFromHome,
             preferred_setting: preferredSetting,
             preferred_size: preferredSize,
             rigor: rigor,
-            campus_culture_preferences: campusCulturePreferences.map { $0 },
+            campus_culture_preferences: campusCulturePreferences,
             special_programs: specialPrograms,
             greek_life_interest: greekLifeInterest,
             research_interest: researchInterest,
@@ -103,6 +109,7 @@ extension StudentInfo {
         )
     }
 }
+
 
 // MARK: - Supporting Enums
 enum Gender: String, CaseIterable, Codable {

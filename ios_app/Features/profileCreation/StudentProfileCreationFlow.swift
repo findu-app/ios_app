@@ -142,7 +142,6 @@ struct StudentProfileCreationFlow: View {
         let data = studentInfo.toDatabaseModel()
         
         let response = try await table.insert([data]).select().execute()
-        
 
         print("Inserted student data:", response.data ?? "No data returned")
     }

@@ -20,6 +20,8 @@ struct SchoolsListView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     let mockStudentInfo = StudentInfo(
+        id: UUID().uuidString,
+        userID: UUID().uuidString,
         name: "Alex Johnson",
         phone: "555-123-4567",
         preferredContactMethod: "Email",

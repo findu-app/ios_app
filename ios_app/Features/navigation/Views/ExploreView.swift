@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ExploreView: View {
-    let studentId: UUID // Add a property to hold the student ID
 
     var body: some View {
-        SwipeableCardsView(studentId: studentId) // Pass the student ID to SwipeableCardsView
+        SwipeableCardsView() // Pass the student ID to SwipeableCardsView
     }
 }

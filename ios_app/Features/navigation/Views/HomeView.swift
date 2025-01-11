@@ -10,9 +10,6 @@ import SwiftUI
 struct HomeView: View {
     @State private var selectedTab: Tab = .explore
 
-    // Temporary hardcoded studentId
-    private let studentId: UUID = UUID() // Replace with actual student ID logic
-
     var body: some View {
         VStack(spacing: 0) {
             HomeHeader()
@@ -24,7 +21,8 @@ struct HomeView: View {
                 case .saved:
                     SavedView()
                 case .explore:
-                    ExploreView(studentId: studentId)
+                    ExploreView()
+                        .environmentObject(GlobalStudentDataState())
                 case .settings:
                     SettingsView()
                 }

@@ -1,31 +1,21 @@
 import SwiftUI
-import Supabase
 
 @MainActor
 class CardsViewModel: ObservableObject {
-    // The main list of schools for the UI
     @Published var schools: [School] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    // If you support multiple students at once, store them in some structure.
-    // For now, let's assume a single active student:
-    var currentStudentId: UUID
-    var studentProfile: StudentInfo?
-    
+    private var globalStudentState: GlobalStudentDataState
     private var swipedHistory: [School] = []
 
-
-    // We keep our match scores here, in memory
     private var localMatchScores: [StudentSchoolKey: String] = [:]
-
-    // If you still need to track swipes:
     private var swipedSchoolIDs: Set<UUID> = []
     private let preloadThreshold = 5
     private let loadBatchSize = 10
 
-    init(studentId: UUID) {
-        self.currentStudentId = studentId
+    init(globalStudentState: GlobalStudentDataState) {
+        self.globalStudentState = globalStudentState
     }
 
     func loadInitialSchools() async {
@@ -38,24 +28,30 @@ class CardsViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            // 1) Fetch some schools from Supabase, for example
+            // Fetch schools from Supabase
             let newSchools: [School] = try await supabase
                 .rpc("get_random_schools", params: ["count": loadBatchSize])
                 .execute()
                 .value
 
-            // 2) Filter out any that have been swiped
+            // Filter out already swiped schools
             let filtered = newSchools.filter { !swipedSchoolIDs.contains($0.id) }
 
-            // 3) Compute & store match scores for the active student
-            for school in filtered {
-                let key = StudentSchoolKey(studentId: currentStudentId, schoolId: school.id)
-                localMatchScores[key] = computeMatchScore(for: school, student: studentProfile)
+            // Access the student profile
+            guard let studentProfile = globalStudentState.studentInfo else {
+                print("No student profile available")
+                return
             }
 
-            // 4) Append them for display
-            self.schools.append(contentsOf: filtered)
+            // Compute match scores for the active student
+            for school in filtered {
+                let key = StudentSchoolKey(studentId: UUID(uuidString: studentProfile.id) ?? UUID(), schoolId: school.id)
+                let score = MatchScoreCalculator.computeMatchScore(for: school, student: studentProfile)
+                localMatchScores[key] = score
+            }
 
+            // Append new schools for display
+            self.schools.append(contentsOf: filtered)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -63,9 +59,12 @@ class CardsViewModel: ObservableObject {
         isLoading = false
     }
 
-    /// Example: remove the top school when swiped
     func handleSwipe(direction: CardSwipeDirection) async {
         guard let topSchool = schools.first else { return }
+        
+        // Add the swiped school to history
+        swipedHistory.append(topSchool)
+        
         schools.removeFirst()
         swipedSchoolIDs.insert(topSchool.id)
 
@@ -74,59 +73,39 @@ class CardsViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Compute the Match Score
 
-    private func computeMatchScore(for school: School, student: StudentInfo?) -> String {
-        guard let student = student,
-              let sACT = school.actScore,
-              let stACT = student.actScore else {
-            print("Missing ACT scores. Returning grade C for school: \(school.name ?? "Unknown")")
-            return "C" // Default to "C" if data is missing
-        }
-
-        // Calculate the absolute difference
-        let diff = abs(Double(stACT) - Double(sACT))
-
-        // Map the difference to a grade with higher ranges
-        let grade: String
-        switch diff {
-        case 0...5:
-            grade = "A" // Excellent match
-        case 6...10:
-            grade = "B" // Good match
-        default:
-            grade = "C" // Below average match
-        }
-
-        // Debug output
-        print("Student ACT: \(stACT), School ACT: \(sACT), Difference: \(diff), Grade: \(grade) for school: \(school.name ?? "Unknown")")
-
-        return grade
-    }
-
-
-
-    // MARK: - Accessing the Score from the UI
-
-    /// A helper for your SwiftUI views
     func matchScore(for school: School) -> String {
-        let key = StudentSchoolKey(studentId: currentStudentId, schoolId: school.id)
-        return localMatchScores[key] ?? "C" // Default to "C"
+        // Ensure the student profile is available
+        guard let studentProfile = globalStudentState.studentInfo else {
+            print("No student profile available. Returning default grade C.")
+            return "C"
+        }
+
+        // Construct the unique key for the student and school
+        let key = StudentSchoolKey(studentId: UUID(uuidString: studentProfile.id) ?? UUID(), schoolId: school.id)
+
+        // Fetch the match score from the local cache, compute if missing
+        if let cachedScore = localMatchScores[key] {
+            return cachedScore
+        } else {
+            let score = MatchScoreCalculator.computeMatchScore(for: school, student: studentProfile)
+            localMatchScores[key] = score // Cache the computed score
+            return score
+        }
     }
 
     func isTopSchool(_ school: School) -> Bool {
         return school.id == schools.first?.id
     }
 
-    /// Undo the last swipe
     func undoSwipe() {
-        // 3) Pop the last-swiped school (if any)
-        guard let lastSwiped = swipedHistory.popLast() else { return }
-        // Remove it from swipedSchoolIDs so we can swipe it again
-        swipedSchoolIDs.remove(lastSwiped.id)
-        // Put it back on top of the schools array
-        schools.insert(lastSwiped, at: 0)
+        guard let lastSwiped = swipedHistory.popLast() else {
+            return
+        }
 
-        print("Undo swipe for: \(lastSwiped.name)")
+        // Remove the school from swiped IDs and insert it back into the schools list
+        swipedSchoolIDs.remove(lastSwiped.id)
+        schools.insert(lastSwiped, at: 0)
     }
+
 }
