@@ -12,34 +12,59 @@ struct CollegeInfoView: View {
     var studentMatchScore: StudentSchoolMatch
 
     var body: some View {
-
-        
         ScrollView {
             VStack(spacing: 24) {
                 CollegeInfoTitle(
                     school: school.name ?? "Unknown School",
-                    cityState: "\(school.city ?? "Unknown City"), \(school.state ?? "Unknown State")"
+                    cityState:
+                        "\(school.city ?? "Unknown City"), \(school.state ?? "Unknown State")",
+                    matchScore: studentMatchScore.matchScore
                 )
-                
+
                 CostSectionView(
                     matchScore: studentMatchScore.costScore,
-                    fourYearDebt: "\(school.averageDebt ?? 0)",
-                    averageCost: "\(school.coaAcademicYear ?? 0)",
+                    fourYearDebt:
+                        "\(StatFormatter.formatToDollarString(school.averageDebt))",
+                    averageCost:
+                        "\(StatFormatter.formatToDollarString(Float(school.coaAcademicYear ?? 0)))",
                     quickStats: [
                         [
                             "label": "In-state Tuition",
-                            "stat": "\(school.inStateTuition ?? 0)",
-                            "match": studentMatchScore.inStateTutionMatch
+                            "stat":
+                                "\(StatFormatter.formatToDollarString(school.inStateTuition))",
+                            "match": studentMatchScore.inStateTutionMatch,
+                        ],
+                        [
+                            "label": "Net Price",
+                            "stat": StatFormatter.formatNetPrice(
+                                publicPrice: school.averageNetPricePublic,
+                                privatePrice: school.averageNetPricePrivate
+                            ),
+                            "match": StatFormatter.formatNetPriceMatch(
+                                publicMatch: studentMatchScore
+                                    .averageNetPricePublic,
+                                privateMatch: studentMatchScore
+                                    .averageNetPricePrivate
+                            ),
                         ],
                         [
                             "label": "Out-of-state Tuition",
-                            "stat": "\(school.outStateTuition ?? 0)",
-                            "match": studentMatchScore.outStateTutionMatch
+                            "stat":
+                                "\(StatFormatter.formatToDollarString(school.outStateTuition))",
+                            "match": studentMatchScore.outStateTutionMatch,
+                        ],
+                        [
+                            "label": "Avg Aid",
+                            "stat":
+                                "\(StatFormatter.formatToDollarString(Float(school.averageFinancialAid ?? 0)))",
+                            "match": studentMatchScore.averageNetPricePublic
+                                ?? studentMatchScore.averageNetPricePrivate
+                                ?? "N/A",
                         ],
                     ],
-                    link: "https://example.com"
+                    link: StatFormatter.formatURL(school.schoolUrl)
                 )
-                
+
                 AcademicsSectionView(
                     matchScore: studentMatchScore.academicScore,
                     degreesOffered: [
@@ -48,77 +73,145 @@ struct CollegeInfoView: View {
                         ["label": "", "stat": "Master's", "match": "N/A"],
                     ],
                     areasOfStudy: [
-                        ["label": "", "stat": "Computer Science", "match": "N/A"],
+                        [
+                            "label": "", "stat": "Computer Science",
+                            "match": "N/A",
+                        ],
                         ["label": "", "stat": "Business", "match": "N/A"],
-                        ["label": "", "stat": "Art History", "match": "N/A"]
+                        ["label": "", "stat": "Art History", "match": "N/A"],
                     ],
                     quickStats: [
                         [
                             "label": "Student-Faculty Ratio",
-                            "stat": "\(school.studentToFacultyRatio ?? 0)",
-                            "match": studentMatchScore.studentToFacultyRatioMatch
-                        ]
+                            "stat":
+                                "\(StatFormatter.formatStudentFacultyRatio(school.studentToFacultyRatio))",
+                            "match": studentMatchScore
+                                .studentToFacultyRatioMatch,
+                        ],
+                        [
+                            "label": "School Type",
+                            "stat": school.carnegieDescription,
+                            "match": "N/A",
+                        ],
                     ],
-                    link: "https://example.com"
+                    link: StatFormatter.formatURL(school.schoolUrl)
                 )
-                
+
                 AdmissionsSectionView(
                     matchScore: studentMatchScore.admissionScore,
-                    chancesOfIn: "Very High (Safety)",
+                    chancesOfIn: studentMatchScore.chancesOfAcceptanceMatch,
                     quickStats: [
                         [
                             "label": "Admissions Rate",
-                            "stat": "\(school.admissionsRate ?? 0)%",
-                            "match": studentMatchScore.admissionsRateMatch
+                            "stat": StatFormatter.formatAdmissionsRate(
+                                school.admissionsRate),
+                            "match": studentMatchScore.admissionsRateMatch,
                         ],
                         [
                             "label": "Average SAT",
-                            "stat": "\(school.satScore ?? 0)",
-                            "match": studentMatchScore.satScoreMatch
+                            "stat": StatFormatter.formatSATScore(
+                                school.satScore),
+                            "match": studentMatchScore.satScoreMatch,
                         ],
                         [
                             "label": "Average ACT",
-                            "stat": "\(school.actScore ?? 0)",
-                            "match": studentMatchScore.actScoreMatch
-                        ]
+                            "stat": StatFormatter.formatACTScore(
+                                school.actScore),
+                            "match": studentMatchScore.actScoreMatch,
+                        ],
                     ],
-                    link: "https://example.com"
+                    link: StatFormatter.formatURL(school.schoolUrl)
                 )
-                
+
                 CampusSectionView(
                     matchScore: studentMatchScore.campusScore,
                     demographics: [
-                        ["label": "White", "stat": "60%", "match": "N/A"],
-                        ["label": "Black", "stat": "30%", "match": "N/A"],
-                        ["label": "Asian", "stat": "10%", "match": "N/A"]
-                    ],
+                        [
+                            "label": "White",
+                            "stat": StatFormatter.formatPercent(school.white),
+                            "match": "N/A",
+                        ],
+                        [
+                            "label": "Black",
+                            "stat": StatFormatter.formatPercent(school.black),
+                            "match": "N/A",
+                        ],
+                        [
+                            "label": "Asian",
+                            "stat": StatFormatter.formatPercent(school.asian),
+                            "match": "N/A",
+                        ],
+                        [
+                            "label": "Hispanic",
+                            "stat": StatFormatter.formatPercent(
+                                school.hispanic), "match": "N/A",
+                        ],
+                        [
+                            "label": "Native American",
+                            "stat": StatFormatter.formatPercent(school.aian),
+                            "match": "N/A",
+                        ],
+                        [
+                            "label": "Multi-Racial",
+                            "stat": StatFormatter.formatPercent(
+                                school.twoOrMore), "match": "N/A",
+                        ],
+                    ]
+                    .filter {
+                        let stat =
+                            Float(
+                                $0["stat"]?.replacingOccurrences(
+                                    of: "%", with: "") ?? "0") ?? 0
+                        return stat > 0
+                    }
+                    .sorted {
+                        let stat1 =
+                            Float(
+                                $0["stat"]?.replacingOccurrences(
+                                    of: "%", with: "") ?? "0") ?? 0
+                        let stat2 =
+                            Float(
+                                $1["stat"]?.replacingOccurrences(
+                                    of: "%", with: "") ?? "0") ?? 0
+                        return stat1 > stat2
+                    },
                     quickStats: [
+                        [
+                            "label": "",
+                            "stat": school.ownershipDescription,
+                            "match": "N/A",
+                        ],
                         [
                             "label": "Setting",
                             "stat": "\(school.localeDescription)",
-                            "match": studentMatchScore.localeMatch
-                        ]
+                            "match": studentMatchScore.localeMatch,
+                        ],
                     ],
-                    link: "https://example.com"
+                    link: StatFormatter.formatURL(school.schoolUrl)
                 )
-                
+
                 OutcomesSectionView(
                     matchScore: studentMatchScore.outcomesScore,
-                    salaryAfterCollege: "$60,000",
-                    studentsWhoReturn: "88%",
+                    employmentRate: StatFormatter.formatEmploymentRate(
+                        school.calculatedEmploymentRate),
+                    studentsWhoReturn: StatFormatter.formatPercent(
+                        school.fourYearRetentionRate),
                     quickStats: [
                         [
                             "label": "Graduation Rate",
-                            "stat": "\((school.fourYearGradRate ?? 0.0) * 100)%",
-                            "match": studentMatchScore.fourYearGradRateMatch
+                            "stat": StatFormatter.formatPercent(
+                                school.fourYearGradRate),
+                            "match": studentMatchScore.fourYearGradRateMatch,
                         ],
                         [
                             "label": "Percent Earning More Than HS Grad",
-                            "stat": "\((school.percentEarningMoreThanHSGrad ?? 0.0) * 100)%",
-                            "match": studentMatchScore.percentEarningMoreThanHSGradMatch
-                        ]
+                            "stat": StatFormatter.formatPercent(
+                                school.percentEarningMoreThanHSGrad),
+                            "match": studentMatchScore
+                                .percentEarningMoreThanHSGradMatch,
+                        ],
                     ],
-                    link: "https://example.com"
+                    link: StatFormatter.formatURL(school.schoolUrl)
                 )
             }
             .padding(.horizontal, 16)

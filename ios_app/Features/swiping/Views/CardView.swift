@@ -63,20 +63,24 @@ struct CardView: View {
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
                             Spacer()
-                            VStack {
-                                Text("\(matchScore)")
-                                    .font(
-                                        Font.custom(
-                                            "Plus Jakarta Sans Bold", size: 30)
-                                    )
-                                    .foregroundColor(Color("OnLike"))
-                                Text("Match")
-                                    .font(
-                                        Font.custom(
-                                            "Plus Jakarta Sans SemiBold",
-                                            size: 12)
-                                    )
-                                    .foregroundColor(Color("OnLike"))
+                            if matchScore != "N/A" {
+                                VStack {
+                                    Text("\(matchScore)")
+                                        .font(
+                                            Font.custom(
+                                                "Plus Jakarta Sans Bold", size: 30
+                                            )
+                                        )
+                                        .foregroundColor(StatFormatter.colorForMatchScoreCard(matchScore))
+                                    Text("Match")
+                                        .font(
+                                            Font.custom(
+                                                "Plus Jakarta Sans SemiBold",
+                                                size: 12
+                                            )
+                                        )
+                                        .foregroundColor(StatFormatter.colorForMatchScoreCard(matchScore))
+                                }
                             }
                         }
                         Text(viewModel.formattedLocation())

@@ -143,8 +143,9 @@ struct School: Decodable, Identifiable, Equatable {
         }
     
     var averageFinancialAid: Int? {
-        guard let coa = coaAcademicYear else { return nil }
-        let netPrice = averageNetPricePublic ?? averageNetPricePrivate ?? 0
+        guard let coa = coaAcademicYear, coa > 0 else { return 0 }
+        let netPrice = (averageNetPricePublic ?? averageNetPricePrivate ?? 0)
+        guard netPrice > 0 else { return 0 }
         return max(0, coa - netPrice)
     }
 
@@ -236,54 +237,36 @@ struct School: Decodable, Identifiable, Equatable {
 
     
     var carnegieDescription: String {
-            guard let carnegie = self.carnegie else {
-                return "Unknown Classification"
-            }
-
-            switch carnegie {
-            case -2: return "Not applicable"
-            case 0: return "(Not classified)"
-            case 1: return "Two-year, very small"
-            case 2: return "Two-year, small"
-            case 3: return "Two-year, medium"
-            case 4: return "Two-year, large"
-            case 5: return "Two-year, very large"
-            case 6: return "Four-year, very small, primarily nonresidential"
-            case 7: return "Four-year, very small, primarily residential"
-            case 8: return "Four-year, very small, highly residential"
-            case 9: return "Four-year, small, primarily nonresidential"
-            case 10: return "Four-year, small, primarily residential"
-            case 11: return "Four-year, small, highly residential"
-            case 12: return "Four-year, medium, primarily nonresidential"
-            case 13: return "Four-year, medium, primarily residential"
-            case 14: return "Four-year, medium, highly residential"
-            case 15: return "Four-year, large, primarily nonresidential"
-            case 16: return "Four-year, large, primarily residential"
-            case 17: return "Four-year, large, highly residential"
-            case 18: return "Exclusively graduate/professional"
-            default: return "Unknown Classification"
-            }
-        }
+        guard let carnegie = self.carnegie else { return "Unknown" }
+        let descriptions: [Int: String] = [
+            -2: "N/A", 0: "Unclassified",
+            1: "2-year (small)", 2: "2-year (medium)", 3: "2-year (large)",
+            6: "4-year (nonresidential)", 7: "4-year (residential)",
+            8: "4-year (highly residential)", 12: "4-year (medium)",
+            15: "4-year (large)", 18: "Graduate/Professional"
+        ]
+        return descriptions[carnegie] ?? "N/A"
+    }
 
 
     var localeDescription: String {
         guard let locale = self.locale else {
-            return "Unknown Locale"
+            return "N/A"
         }
 
         switch locale {
-        case 11: return "City: Large (population of 250,000 or more)"
-        case 12: return "City: Midsize (population of at least 100,000 but less than 250,000)"
-        case 13: return "City: Small (population less than 100,000)"
-        case 21: return "Suburb: Large (outside principal city, in urbanized area with population of 250,000 or more)"
-        case 22: return "Suburb: Midsize (outside principal city, in urbanized area with population of at least 100,000 but less than 250,000)"
-        case 23: return "Suburb: Small (outside principal city, in urbanized area with population less than 100,000)"
-        case 31: return "Town: Fringe (in urban cluster up to 10 miles from an urbanized area)"
-        case 32: return "Town: Distant (in urban cluster more than 10 miles and up to 35 miles from an urbanized area)"
-        case 33: return "Town: Remote (in urban cluster more than 35 miles from an urbanized area)"
-        case 41: return "Rural: Fringe (rural territory up to 5 miles from an urbanized area or up to 2.5 miles from an urban cluster)"
-        case 42: return "Rural: Distant (rural territory more than 5 miles but up to 25 miles from an urbanized area or more than 2.5 and up to 10 miles from an urban cluster)"
-        case 43: return "Rural: Remote (rural territory more than 25 miles from an urbanized area and more than 10 miles from an urban cluster)"
+        case 11: return "City (pop. of 250,000)"
+        case 12: return "City (pop. 100,000-250,000)"
+        case 13: return "City (pop. < 100,000)"
+        case 21: return "Suburb (pop. of 250,000)"
+        case 22: return "Suburb (pop. 100,000-250,000)"
+        case 23: return "Suburb (pop. < 100,000)"
+        case 31: return "Town (fringe, <10 mi urban)"
+        case 32: return "Town (distant, 10-35 mi)"
+        case 33: return "Town (remote, >35 mi)"
+        case 41: return "Rural (fringe, <5 mi urban)"
+        case 42: return "Rural (distant, 5-25 mi urban)"
+        case 43: return "Rural (remote, >25 mi urban)"
         default: return "Unknown Locale"
         }
     }

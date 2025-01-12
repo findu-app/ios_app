@@ -32,12 +32,14 @@ struct MatchScoreCalculator {
             costDetails.outStateTuitionMatch,
             costDetails.coaAcademicYearMatch,
             costDetails.coaAcademicYearMatch,
+            costDetails.financialAidMatch,
         ])
 
         let admissionScore = calculateOverallGrade(from: [
             admissionsDetails.actScoreMatch,
             admissionsDetails.satScoreMatch,
             admissionsDetails.admissionsRateMatch,
+            admissionsDetails.chancesOfAcceptanceMatch
         ])
 
         let academicScore = calculateOverallGrade(from: [
@@ -55,13 +57,14 @@ struct MatchScoreCalculator {
         ])
 
         // Compute overall match score
-        let overallMatch = calculateOverallGrade(from: [
+        let overallMatch = calculateOverallMatchScore(from: [
             mapToGrade(costDetails.averageDebt4YearMatch),
             mapToGrade(costDetails.averageNetPricePublic),
             mapToGrade(costDetails.averageNetPricePrivate),
             mapToGrade(costDetails.inStateTuitionMatch),
             mapToGrade(costDetails.outStateTuitionMatch),
             mapToGrade(costDetails.coaAcademicYearMatch),
+            mapToGrade(costDetails.financialAidMatch),
             mapToGrade(admissionsDetails.actScoreMatch),
             mapToGrade(admissionsDetails.satScoreMatch),
             mapToGrade(admissionsDetails.admissionsRateMatch),
@@ -89,12 +92,14 @@ struct MatchScoreCalculator {
             inStateTutionMatch: costDetails.inStateTuitionMatch,
             outStateTutionMatch: costDetails.outStateTuitionMatch,
             coaAcademicYearMatch: costDetails.coaAcademicYearMatch,
+            financialAidMatch: costDetails.financialAidMatch,
             carnegieMatch: "N/A",
             studentToFacultyRatioMatch: academicDetails,
             areasofStudyMatch: "N/A",
             actScoreMatch: admissionsDetails.actScoreMatch,
             satScoreMatch: admissionsDetails.satScoreMatch,
             admissionsRateMatch: admissionsDetails.admissionsRateMatch,
+            chancesOfAcceptanceMatch: admissionsDetails.chancesOfAcceptanceMatch,
             sizeMatch: campusDetails,
             localeMatch: "N/A",
             religiousAffiliationMatch: "N/A",
@@ -125,17 +130,20 @@ struct MatchScoreCalculator {
               - COA Academic Year: \(school.coaAcademicYear ?? 0) → \(match.coaAcademicYearMatch)
               - Average Net Price Public: \(school.averageNetPricePublic ?? 0) → \(match.averageNetPricePublic)
               - Average Net Price Private: \(school.averageNetPricePrivate ?? 0) → \(match.averageNetPricePrivate)
+              - Financial Aid: \(school.averageFinancialAid ?? 0) -> \(match.financialAidMatch)
 
             Admissions Details:
               - Admission Score: \(match.admissionScore)
               - ACT Score: \(school.actScore ?? 0) → \(match.actScoreMatch)
               - SAT Score: \(school.satScore ?? 0) → \(match.satScoreMatch)
               - Admissions Rate: \(school.admissionsRate ?? 0.0) → \(match.admissionsRateMatch)
+              - Chances of Getting in: \(match.chancesOfAcceptanceMatch)
 
             Academic Details:
               - Academic Score: \(match.academicScore)
               - Student-to-Faculty Ratio: \(school.studentToFacultyRatio ?? 0) → \(match.studentToFacultyRatioMatch)
               - Areas of Study Match: \(match.areasofStudyMatch)
+              - Areas \(school.areasOfStudy)
 
             Campus Details:
               - Campus Score: \(match.campusScore)
@@ -162,7 +170,8 @@ struct MatchScoreCalculator {
         outStateTuitionMatch: String,
         coaAcademicYearMatch: String,
         averageNetPricePublic: String,
-        averageNetPricePrivate: String
+        averageNetPricePrivate: String,
+        financialAidMatch: String
     ) {
         return (
             averageDebt4YearMatch: Classify.classifyAverageDebt(
@@ -176,7 +185,8 @@ struct MatchScoreCalculator {
             averageNetPricePublic: Classify.classifyNetPricePublic(
                 school.averageNetPricePublic.map(Float.init)),
             averageNetPricePrivate: Classify.classifyNetPricePrivate(
-                school.averageNetPricePrivate.map(Float.init))
+                school.averageNetPricePrivate.map(Float.init)),
+            financialAidMatch: Classify.classifyFinancialAid(school.averageFinancialAid.map(Float.init))
         )
     }
 
@@ -185,7 +195,8 @@ struct MatchScoreCalculator {
     ) -> (
         actScoreMatch: String,
         satScoreMatch: String,
-        admissionsRateMatch: String
+        admissionsRateMatch: String,
+        chancesOfAcceptanceMatch: String
     ) {
         let actScoreMatch = Classify.classifyACTScore(
             actual: student.actScore.map(Float.init),
@@ -197,8 +208,11 @@ struct MatchScoreCalculator {
         )
         let admissionsRateMatch = Classify.classifyAdmissionsRate(
             school.admissionsRate)
+        let chancesOfAcceptanceMatch = Classify.classifyChancesOfAcceptance(
+            studentACT: student.actScore.map(Float.init), studentSAT: student.satScore.map(Float.init), schoolACT: school.actScore, schoolSAT: school.satScore, admissionsRate: school.admissionsRate)
+            
 
-        return (actScoreMatch, satScoreMatch, admissionsRateMatch)
+        return (actScoreMatch, satScoreMatch, admissionsRateMatch, chancesOfAcceptanceMatch)
     }
 
     private static func calculateAcademicsDetails(for school: School) -> String
@@ -271,6 +285,49 @@ struct MatchScoreCalculator {
         case 2.0..<2.3: return "C"
         case 1.7..<2.0: return "C-"
         default: return "C-"  // Minimum grade
+        }
+    }
+    
+    private static func calculateOverallMatchScore(from sectionScores: [String]) -> String {
+        // Count the number of "N/A" grades
+        let naCount = sectionScores.filter { $0 == "N/A" }.count
+
+        // Check if half or more of the grades are "N/A"
+        if naCount >= sectionScores.count / 2 {
+            return "N/A"
+        }
+
+        // Use the regular grade calculation for the remaining cases
+        let gradeValues: [String: Double] = [
+            "A+": 4.3, "A": 4.0, "A-": 3.7,
+            "B+": 3.3, "B": 3.0, "B-": 2.7,
+            "C+": 2.3, "C": 2.0, "C-": 1.7,
+            "Low": 2.0, "Medium": 3.0, "High": 4.0,
+        ]
+
+        // Convert grades to numeric scores, ignoring "N/A"
+        let numericScores = sectionScores.compactMap { grade in
+            grade == "N/A" ? nil : gradeValues[grade]
+        }
+
+        // Handle the case where no valid scores exist
+        guard !numericScores.isEmpty else { return "C-" }
+
+        // Calculate the average numeric score
+        let average = numericScores.reduce(0, +) / Double(numericScores.count)
+
+        // Map the average numeric score back to a grade
+        switch average {
+        case 4.3...: return "A+"
+        case 4.0..<4.3: return "A"
+        case 3.7..<4.0: return "A-"
+        case 3.3..<3.7: return "B+"
+        case 3.0..<3.3: return "B"
+        case 2.7..<3.0: return "B-"
+        case 2.3..<2.7: return "C+"
+        case 2.0..<2.3: return "C"
+        case 1.7..<2.0: return "C-"
+        default: return "C-"
         }
     }
 

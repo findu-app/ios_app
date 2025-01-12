@@ -34,32 +34,33 @@ class CardViewModel: ObservableObject {
 
     /// Provides formatted stats for the `StatTagList` view
     func statTags() -> [[String: String]] {
-        [
+        let tags = [
             [
-                "label": "Average ACT",
-                "stat": school.actScore != nil ? "\(school.actScore!)" : "N/A",
+                "label": "Avg ACT",
+                "stat": StatFormatter.formatACTScore(school.actScore),
                 "match": studentMatch.actScoreMatch
             ],
             [
                 "label": "Avg Debt",
-                "stat": school.averageDebt != nil
-                    ? "\(school.averageDebt!)" : "N/A",
+                "stat": StatFormatter.formatToDollarString(school.averageDebt),
                 "match": studentMatch.averageDebt4YearMatch
             ],
             [
                 "label": "Avg Tuition",
-                "stat": school.inStateTuition != nil
-                    ? "\(school.inStateTuition!)" : "N/A",
+                "stat": StatFormatter.formatToDollarString(school.inStateTuition),
                 "match": studentMatch.inStateTutionMatch
             ],
             [
-                "label": "Graduation Rate",
-                "stat": school.fourYearGradRate != nil
-                    ? "\(Int(school.fourYearGradRate! * 100))%" : "N/A",
+                "label": "Grad Rate",
+                "stat": StatFormatter.formatPercent(school.fourYearGradRate),
                 "match": studentMatch.fourYearGradRateMatch
             ]
         ]
+
+        // Filter out tags with "N/A" in the "stat" field
+        return tags.filter { $0["stat"] != "N/A" }
     }
+
 
     /// Provides a formatted description of the school location
     func formattedLocation() -> String {

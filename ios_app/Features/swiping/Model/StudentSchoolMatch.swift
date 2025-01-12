@@ -27,6 +27,7 @@ struct StudentSchoolMatch: Codable, Identifiable {
     let inStateTutionMatch: String
     let outStateTutionMatch: String
     let coaAcademicYearMatch: String
+    let financialAidMatch: String
     
     let carnegieMatch: String
     let studentToFacultyRatioMatch: String
@@ -35,6 +36,7 @@ struct StudentSchoolMatch: Codable, Identifiable {
     let actScoreMatch: String
     let satScoreMatch: String
     let admissionsRateMatch: String
+    let chancesOfAcceptanceMatch: String
     
     let sizeMatch: String
     let localeMatch: String

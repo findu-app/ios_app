@@ -49,21 +49,80 @@ struct Classify {
         return price < 15000 ? "Low" : price < 30000 ? "Medium" : "High"
     }
     
+    static func classifyFinancialAid(_ aid: Float?) -> String {
+        guard let aid else { return "N/A" }
+        if aid == 0 { return "N/A" }
+        return aid < 2500 ? "Low" : aid < 5000 ? "Medium" : "High"
+    }
+    
     static func classifyACTScore(actual: Float?, target: Float?) -> String {
         guard let actual = actual, let target = target else { return "N/A" }
-        let diff = abs(actual - target)
-        return diff < 2 ? "High" : diff < 5 ? "Medium" : "Low"
+        if actual >= target + 4 {
+            return "High"
+        } else if actual >= target - 4 {
+            return "Medium"
+        } else {
+            return "Low"
+        }
     }
 
     static func classifySATScore(actual: Float?, target: Float?) -> String {
         guard let actual = actual, let target = target else { return "N/A" }
-        let diff = abs(actual - target)
-        return diff < 50 ? "High" : diff < 100 ? "Medium" : "Low"
+        if actual >= target + 200 {
+            return "High"
+        } else if actual >= target - 200 {
+            return "Medium"
+        } else {
+            return "Low"
+        }
     }
+
 
     static func classifyAdmissionsRate(_ rate: Float?) -> String {
         guard let rate = rate else { return "N/A" }
-        return rate < 0.3 ? "High" : rate < 0.7 ? "Medium" : "Low"
+        if rate >= 0.7 {
+            return "High"
+        } else if rate >= 0.3 {
+            return "Medium"
+        } else {
+            return "Low"
+        }
+    }
+    
+    static func classifyChancesOfAcceptance(
+        studentACT: Float?, studentSAT: Float?,
+        schoolACT: Float?, schoolSAT: Float?,
+        admissionsRate: Float?
+    ) -> String {
+        // Classify ACT and SAT scores individually
+        let actMatch = classifyACTScore(actual: studentACT, target: schoolACT)
+        let satMatch = classifySATScore(actual: studentSAT, target: schoolSAT)
+        
+        // Determine the stronger match (Higher priority: High > Medium > Low > N/A)
+        let scoreMatch: String
+        if actMatch == "High" || satMatch == "High" {
+            scoreMatch = "High"
+        } else if actMatch == "Medium" || satMatch == "Medium" {
+            scoreMatch = "Medium"
+        } else if actMatch == "Low" || satMatch == "Low" {
+            scoreMatch = "Low"
+        } else {
+            scoreMatch = "N/A"
+        }
+        
+        // Classify the admissions rate
+        let rateMatch = classifyAdmissionsRate(admissionsRate)
+        
+        // Combine the results (Conservative scoring: prioritize lower category)
+        if scoreMatch == "High" && rateMatch == "High" {
+            return "Very High (Safety)"
+        } else if scoreMatch == "Medium" || rateMatch == "Medium" {
+            return "Good Chance"
+        } else if scoreMatch == "Low" || rateMatch == "Low" {
+            return "Low (Reach)"
+        } else {
+            return "N/A"
+        }
     }
 
     static func classifyStudentFacultyRatio(_ ratio: Float?) -> String {
@@ -100,7 +159,7 @@ struct Classify {
     
     static func classifyGradRate(_ rate: Float?) -> String {
         guard let rate = rate, rate > 0 else { return "N/A" } // Handle nil and zero
-        return rate < 0.5 ? "Low" : rate < 0.75 ? "Medium" : "High"
+        return rate < 0.30 ? "Low" : rate < 0.70 ? "Medium" : "High"
     }
 
     static func classifyEarningMore(_ rate: Float?) -> String {

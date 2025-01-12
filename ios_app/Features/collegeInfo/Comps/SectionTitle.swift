@@ -21,7 +21,7 @@ struct SectionTitle: View {
                 .font(
                     Font.custom("Plus Jakarta Sans Bold", size: 24)
                 )
-                .foregroundStyle(Color.green)
+                .foregroundStyle(StatFormatter.colorForMatchScore(matchScore))
         }
     }
 }

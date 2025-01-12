@@ -16,7 +16,7 @@ struct SectionBlock: View {
         switch match {
         case "High":
             return Color("High-BG")
-        case "Med":
+        case "Medium":
             return Color("Med-BG")
         case "Low":
             return Color("Low-BG")
@@ -31,7 +31,7 @@ struct SectionBlock: View {
         switch match {
         case "High":
             return Color("High-FG")
-        case "Med":
+        case "Medium":
             return Color("Med-FG")
         case "Low":
             return Color("Low-FG")

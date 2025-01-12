@@ -53,8 +53,8 @@ struct AdmissionsSectionView: View {
         let lowercasedChances = chances.lowercased()
         if lowercasedChances.contains("high") {
             return "High"
-        } else if lowercasedChances.contains("medium") || lowercasedChances.contains("med") {
-            return "Med"
+        } else if lowercasedChances.contains("good") || lowercasedChances.contains("med") {
+            return "Medium"
         } else if lowercasedChances.contains("low") {
             return "Low"
         } else {
