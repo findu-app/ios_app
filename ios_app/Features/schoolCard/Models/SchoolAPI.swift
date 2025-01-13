@@ -69,9 +69,6 @@ struct SchoolAPI: Decodable, Identifiable, Equatable {
     let notWorkingNotEnrolled: Int?
     let workingNotEnrolled: Int?
 
-    // Associative relationship with interactions
-    let interactions: [Interaction]?
-
     enum CodingKeys: String, CodingKey {
         case id
         case name = "school.name"
@@ -132,8 +129,6 @@ struct SchoolAPI: Decodable, Identifiable, Equatable {
         case notWorkingNotEnrolled = "latest.earnings.1_yr_after_completion.not_working_not_enrolled.overall_count"
         case workingNotEnrolled = "latest.earnings.1_yr_after_completion.working_not_enrolled.overall_count"
 
-        // Interactions
-        case interactions
     }
     
     // Translated Ownership
