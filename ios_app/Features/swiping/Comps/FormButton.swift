@@ -29,7 +29,7 @@ struct FormButton: View {
                 .font(.custom(font, size: fontSize))
                 .foregroundColor(isSelected ? selectedForegroundColor : foregroundColor)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(isSelected ? selectedBackgroundColor : backgroundColor)
