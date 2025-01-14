@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeHeader: View {
     @Environment(\.colorScheme) var colorScheme
-    @State private var isSearching = false
+    @State private var isDrawerOpen = false // Controls the sheet
     @State private var query = ""
     @State private var suggestions: [School] = []
     @State private var isLoading = false
@@ -29,46 +29,20 @@ struct HomeHeader: View {
 
                 Spacer()
 
-                if isSearching {
-                    HStack {
-                        TextField("Search schools...", text: $query)
-                            .onChange(of: query) { newValue in
-                                debounceSearch(query: newValue)
-                            }
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.leading, 8)
-
-                        Button(action: {
-                            withAnimation {
-                                isSearching = false
-                                query = ""
-                                suggestions = []
-                            }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
+                Button(action: {
+                    withAnimation {
+                        isDrawerOpen = true
                     }
-                    .frame(height: 40)
-                    .background(Color("Surface"))
-                    .cornerRadius(10)
-                    .padding(.horizontal, 8)
-                } else {
-                    Button(action: {
-                        withAnimation {
-                            isSearching = true
-                        }
-                    }) {
-                        HStack(alignment: .center) {
-                            Image(systemName: "magnifyingglass")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 20)
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .foregroundColor(Color("OnSurface"))
-                                .padding(4)
-                        }
+                }) {
+                    HStack(alignment: .center) {
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 20)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("OnSurface"))
+                            .padding(4)
                     }
                 }
             }
@@ -78,29 +52,88 @@ struct HomeHeader: View {
             Divider()
                 .frame(height: 1)
                 .background(Color("Border"))
-
-            // Display suggestions if available
-            if isSearching && !suggestions.isEmpty {
-                List(suggestions, id: \.id) { school in
-                    Text(school.name)
-                        .onTapGesture {
-                            print("Selected school: \(school.name)")
-                            // Handle school selection
-                        }
-                }
-                .frame(maxHeight: 200) // Limit height of the suggestions list
-            } else if isLoading {
-                ProgressView()
-            } else if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-            }
         }
+        .sheet(isPresented: $isDrawerOpen) {
+            VStack(alignment: .leading, spacing: 16) {
+                // Search Bar
+                TextField("Search schools...", text: $query)
+                    .onChange(of: query) { newValue in
+                        debounceSearch(query: newValue)
+                    }
+                    .font(
+                        Font.custom(
+                            "Plus Jakarta Sans Regular", size: 16)
+                    )
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color("SurfaceContainer"))
+                            .stroke(
+                                Color("OnSurface"),
+                                lineWidth: 1
+                            )
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 32)
+
+                // Suggestions or Loading/Error state
+                if isLoading {
+                    ProgressView()
+                        .padding(.horizontal, 16)
+                } else if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .font(
+                            Font.custom(
+                                "Plus Jakarta Sans Regular", size: 16)
+                        )
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 16)
+                } else if !suggestions.isEmpty {
+                    ScrollView {
+                        VStack(alignment: .leading) {
+                            ForEach(suggestions.prefix(5), id: \.id) { school in
+                                Button(action: {
+                                    print("Selected school: \(school.name)")
+                                    // Handle school selection
+                                    isDrawerOpen = false
+                                    query = ""
+                                    suggestions = []
+                                }) {
+                                    Text(school.name)
+                                        .font(
+                                            Font.custom(
+                                                "Plus Jakarta Sans Regular", size: 16)
+                                        )
+                                        .multilineTextAlignment(.leading)
+                                        .padding(.vertical, 8)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundColor(Color("OnSurface"))
+                                }
+                                .padding(.horizontal, 16)
+                            }
+                        }
+                    }
+                } else if query.isEmpty == false {
+                    Text("No results found")
+                        .font(
+                            Font.custom(
+                                "Plus Jakarta Sans Regular", size: 16)
+                        )
+                        .foregroundColor(Color.gray)
+                        .padding(.horizontal, 16)
+                }
+
+                Spacer()
+            }
+            .padding(.bottom, 16)
+            .presentationDetents([.medium, .large]) // Allow resizing
+            .presentationDragIndicator(.visible)
+        }
+        .background(Color("Surface"))
     }
 
     /// Debounces the search to avoid too many API calls
     private func debounceSearch(query: String) {
-        print(suggestions)
         debounceTask?.cancel() // Cancel the previous task if it's still running
 
         debounceTask = Task { @MainActor in
@@ -111,8 +144,6 @@ struct HomeHeader: View {
             }
         }
     }
-
-
 
     /// Fetches suggestions based on the search query
     private func fetchSuggestions(for query: String) async {
