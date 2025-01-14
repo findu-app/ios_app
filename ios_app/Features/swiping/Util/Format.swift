@@ -24,6 +24,20 @@ struct StatFormatter {
 
         return formatter.string(from: NSNumber(value: value)) ?? "N/A"
     }
+    
+    static func formatToDollarString(_ value: Int?) -> String {
+        guard let value = value, value > 0 else {
+            return "N/A"
+        }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        formatter.currencySymbol = "$"
+
+        return formatter.string(from: NSNumber(value: value)) ?? "N/A"
+    }
+
 
     static func formatNetPrice(publicPrice: Int?, privatePrice: Int?) -> String
     {

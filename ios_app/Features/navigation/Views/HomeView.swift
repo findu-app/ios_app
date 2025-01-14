@@ -20,6 +20,7 @@ struct HomeView: View {
                 switch selectedTab {
                 case .saved:
                     SavedView()
+                        .environmentObject(GlobalStudentDataState())
                 case .explore:
                     ExploreView()
                         .environmentObject(GlobalStudentDataState())
