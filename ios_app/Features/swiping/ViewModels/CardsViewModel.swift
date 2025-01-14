@@ -12,6 +12,9 @@ class CardsViewModel: ObservableObject {
     @Published var schools: [School] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var showSheet = false
+    @Published var selectedSchoolForm: School? // The school for which the form is shown
+    @Published var currentInteraction: StudentSchoolInteraction? = nil
 
     // Access to the globalStudentState for the matching
     private var globalStudentState: GlobalStudentDataState
@@ -87,16 +90,87 @@ class CardsViewModel: ObservableObject {
     func handleSwipe(direction: CardSwipeDirection) async {
         guard let topSchool = schools.first else { return }
 
-        // Add the swiped school to history
-        swipedHistory.append(topSchool)
-
+        // Remove the swiped school from the list
         schools.removeFirst()
         swipedSchoolIDs.insert(topSchool.id)
+        swipedHistory.append(topSchool)
 
+        if direction == .right {
+            // Create and set the interaction
+            guard let studentProfile = globalStudentState.studentInfo else { return }
+            currentInteraction = StudentSchoolInteraction(
+                id: UUID(),
+                studentId: UUID(uuidString: studentProfile.id) ?? UUID(),
+                schoolId: topSchool.id,
+                viewed: true,
+                liked: true,
+                disliked: false,
+                matchScore: matchForSchool(topSchool).matchScore,
+                likedMost: nil,
+                worriedAbout: nil,
+                questions: nil,
+                interactionDate: ISO8601DateFormatter().string(from: Date())
+            )
+            // Trigger the form
+            selectedSchoolForm = topSchool
+            showSheet = true
+        } else if direction == .left {
+            // Save the interaction directly for disliked schools
+            await handleDislike(for: topSchool)
+        }
+
+        // Preload more schools if needed
         if schools.count < preloadThreshold {
             await loadMoreSchools()
         }
     }
+
+    private func handleDislike(for school: School) async {
+        guard let studentProfile = globalStudentState.studentInfo else {
+            print("No student profile available")
+            return
+        }
+
+        // Create the dislike interaction
+        let interaction = StudentSchoolInteraction(
+            id: UUID(),
+            studentId: UUID(uuidString: studentProfile.id) ?? UUID(),
+            schoolId: school.id,
+            viewed: true,
+            liked: false,
+            disliked: true,
+            matchScore: matchForSchool(school).matchScore,
+            likedMost: nil,
+            worriedAbout: nil,
+            questions: nil,
+            interactionDate: ISO8601DateFormatter().string(from: Date())
+        )
+
+        // Insert the interaction into the database
+        do {
+            try await insertInteraction(interaction)
+            print("Dislike interaction saved for \(school.name ?? "Unknown School")")
+        } catch {
+            print("Error saving dislike interaction: \(error.localizedDescription)")
+        }
+    }
+
+    func insertInteraction(_ interaction: StudentSchoolInteraction) async throws {
+            do {
+                let result: [StudentSchoolInteraction] = try await supabase
+                    .from("student_school_interactions")
+                    .insert(interaction)
+                    .select()
+                    .execute()
+                    .value
+                print("Interaction inserted successfully: \(result)")
+            } catch {
+                print("Error inserting interaction: \(error.localizedDescription)")
+                throw error
+            }
+        }
+
+
 
     func matchForSchool(_ school: School) -> StudentSchoolMatch {
         // Ensure the student profile is available

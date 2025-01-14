@@ -57,6 +57,7 @@ async function upsertSchools(schools: any[]) {
       coa_academic_year: school["latest.cost.attendance.academic_year"],
 
       // Academics
+      areas_of_study["latest.programs.cip_4_digit"]
       carnegie: school["school.carnegie_size_setting"],
       student_to_faculty_ratio: school["latest.student.demographics.student_faculty_ratio"],
 

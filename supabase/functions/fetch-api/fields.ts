@@ -26,6 +26,7 @@ export const Fields = {
       "latest.cost.attendance.academic_year", // Cost of attendance for an academic year
   
       // Academics
+      "latest.programs.cip_4_digit" // Program
       "latest.programs.cip_4_digit.title", // Program title
       "latest.programs.cip_4_digit.code", // Program code
       "latest.programs.cip_4_digit.earnings.1_yr.overall_median_earnings", // Median earnings 1 year after graduation

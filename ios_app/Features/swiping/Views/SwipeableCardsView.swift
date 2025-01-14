@@ -6,7 +6,7 @@ struct SwipeableCardsView: View {
 
     @State private var dragState = CGSize.zero
     @State private var cardRotation: Double = 0
-    @State private var showSheet = false // Tracks if the sheet is visible
+    @State private var showInfo = false // Tracks if the sheet is visible
     @State private var selectedSchool: School? // Tracks the selected school
 
     private let swipeThreshold: CGFloat = 100.0
@@ -31,7 +31,7 @@ struct SwipeableCardsView: View {
                 ZStack {
                     ForEach(viewModel.schools.prefix(maxVisibleCards).reversed()) { school in
                         let studentMatch = viewModel.matchForSchool(school)
-
+                        
                         CardView(
                             school: school,
                             matchScore: studentMatch.matchScore, // Use the computed match score
@@ -45,7 +45,7 @@ struct SwipeableCardsView: View {
                             },
                             onOpenInfo: { selectedSchool in
                                 self.selectedSchool = selectedSchool
-                                showSheet = true
+                                showInfo = true
                             },
                             studentMatch: studentMatch
                         )
@@ -67,7 +67,7 @@ struct SwipeableCardsView: View {
                                         let dragDistance = gesture.translation
                                         if dragDistance.height < -swipeThreshold {
                                             selectedSchool = school
-                                            showSheet = true
+                                            showInfo = true
                                             resetDrag()
                                         } else if abs(dragDistance.width) > swipeThreshold {
                                             let direction: CardSwipeDirection = (dragDistance.width > 0) ? .right : .left
@@ -94,11 +94,31 @@ struct SwipeableCardsView: View {
             resetDrag() // Reset drag when the sheet is dismissed
         }) { school in
             let studentMatch = viewModel.matchForSchool(school)
-                CollegeInfoView(school: school, studentMatchScore: studentMatch)
-                    .presentationDetents([.fraction(1)]) // Allow resizing between medium and large
-                    .presentationDragIndicator(.visible)
+            CollegeInfoView(school: school, studentMatchScore: studentMatch)
+                .presentationDetents([.fraction(1)]) // Allow resizing between medium and large
+                .presentationDragIndicator(.visible)
         }
-
+        .sheet(isPresented: $viewModel.showSheet, onDismiss: {
+            resetDrag()
+        }) {
+            CollegeInfoForm(
+                studentSchoolInteraction: $viewModel.currentInteraction,
+                onSubmit: { updatedInteraction in
+                    // Handle submission here
+                    Task {
+                        do {
+                            try await viewModel.insertInteraction(updatedInteraction)
+                            viewModel.showSheet = false // Close the sheet
+                        } catch {
+                            print("Failed to save interaction: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            )
+            .presentationDetents([.fraction(0.8)])
+            .presentationDragIndicator(.visible)
+            .interactiveDismissDisabled() // Prevent dismissal unless explicitly handled
+        }
     }
 
     private func handleSwipeAction(direction: CardSwipeDirection) {
