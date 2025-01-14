@@ -18,8 +18,10 @@ struct FormQuestion: View {
                 .font(.custom("Plus Jakarta Sans SemiBold", size: 20))
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
-                .lineLimit(nil)
-                .padding(.bottom, 8)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 16)
 
             VStack(spacing: 12) {
                 ForEach(options, id: \.self) { option in
@@ -40,6 +42,7 @@ struct FormQuestion: View {
                 }
             }.padding(.bottom, 16)
         }
+        .padding(.top, 24)
     }
 }
 

@@ -37,6 +37,9 @@ struct CollegeInfoForm: View {
                     Text("Do you have any questions for an admissions officer?")
                         .font(.custom("Plus Jakarta Sans SemiBold", size: 20))
                         .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text("This will send a message to an admissions officer")
                         .font(.custom("Plus Jakarta Sans Regular", size: 14))
@@ -52,7 +55,7 @@ struct CollegeInfoForm: View {
                         .padding(.bottom)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 32)
+                .padding(.top, 24)
 
                 Spacer()
             }
