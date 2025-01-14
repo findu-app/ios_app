@@ -73,7 +73,8 @@ struct CollegeInfoForm: View {
                 backgroundColor: Color("OnSurface"),
                 showBorder: false
             )
-
+            .disabled(!validateCurrentStep())
+            .opacity(validateCurrentStep() ? 1.0 : 0.5)
         }
         .padding()
     }
