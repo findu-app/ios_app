@@ -10,30 +10,43 @@ import SwiftUI
 struct FormQuestion: View {
     var title: String
     var options: [String]
-    @Binding var selectedOption: String
+    @Binding var selectedOptions: [String]
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .center, spacing: 16) {
             Text(title)
-                .font(.headline)
-                .padding(.bottom)
+                .font(.custom("Plus Jakarta Sans SemiBold", size: 20))
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+                .padding(.bottom, 8)
+
             ForEach(options, id: \.self) { option in
-                Button(action: {
-                    selectedOption = option
-                }) {
-                    HStack {
-                        Text(option)
-                        Spacer()
-                        if selectedOption == option {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.blue)
+                FormButton(
+                    title: option,
+                    // A button is considered "selected" if the array contains this option
+                    isSelected: selectedOptions.contains(option),
+                    action: {
+                        if selectedOptions.contains(option) {
+                            // remove the option
+                            selectedOptions.removeAll { $0 == option }
+                        } else {
+                            // add the option
+                            selectedOptions.append(option)
                         }
                     }
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                }
+                )
             }
         }
+        .padding(.vertical)
     }
+}
+
+#Preview {
+    @State var selectedOptions = ["Costs"]
+    FormQuestion(
+        title: "What did you like the most about this school?",
+        options: ["Costs", "Academics", "Admissions", "Campus", "Financial Aid", "Special Programs", "Career"],
+        selectedOptions: $selectedOptions
+    )
 }

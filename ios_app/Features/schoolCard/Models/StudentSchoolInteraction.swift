@@ -15,8 +15,8 @@ struct StudentSchoolInteraction: Codable, Identifiable, Equatable {
     let liked: Bool
     let disliked: Bool
     let matchScore: String?
-    var likedMost: String?
-    var worriedAbout: String?
+    var likedMost: [String]?
+    var worriedAbout: [String]?
     var questions: String?
     let interactionDate: String?
 

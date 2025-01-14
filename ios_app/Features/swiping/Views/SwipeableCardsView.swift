@@ -115,7 +115,7 @@ struct SwipeableCardsView: View {
                     }
                 }
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.fraction(0.8)])
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled() // Prevent dismissal unless explicitly handled
         }
