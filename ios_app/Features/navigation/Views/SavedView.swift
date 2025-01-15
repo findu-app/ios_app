@@ -1,10 +1,3 @@
-//
-//  SavedView.swift
-//  ios_app
-//
-//  Created by Wilson Overfield on 1/7/25.
-//
-
 import SwiftUI
 
 struct SavedView: View {
@@ -19,49 +12,48 @@ struct SavedView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Header row
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading) {
-                    Text("Liked Colleges")
-                        .font(Font.custom("Plus Jakarta Sans SemiBold", size: 24))
-                        .padding(.bottom, 4)
-                    Text("\(viewModel.likedSchools.count) Liked Colleges")
-                        .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
-                        .foregroundColor(Color("Secondary"))
-                }
-                Spacer()
-                // Sort button or any other top-right action
-                Button(action: {
-                    // Provide sorting logic if desired
-                }) {
-                    HStack(alignment: .center, spacing: 2) {
-                        Text("Sort List")
-                            .font(Font.custom("Plus Jakarta Sans SemiBold", size: 18))
-                            .foregroundColor(Color("Secondary"))
-                        Image(systemName: "chevron.up.chevron.down")
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                // Header row
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading) {
+                        Text("Liked Colleges")
+                            .font(Font.custom("Plus Jakarta Sans SemiBold", size: 24))
+                            .padding(.bottom, 4)
+                        Text("\(viewModel.likedSchools.count) Liked Colleges")
+                            .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
                             .foregroundColor(Color("Secondary"))
                     }
-                    // alignment here
+                    Spacer()
+                    // Sort button or any other top-right action
+                    Button(action: {
+                        // Provide sorting logic if desired
+                    }) {
+                        HStack(alignment: .center, spacing: 2) {
+                            Text("Sort List")
+                                .font(Font.custom("Plus Jakarta Sans SemiBold", size: 18))
+                                .foregroundColor(Color("Secondary"))
+                            Image(systemName: "chevron.up.chevron.down")
+                                .foregroundColor(Color("Secondary"))
+                        }
+                    }
                 }
-            }
-            .padding(.horizontal)
+                .padding(.horizontal)
+                .padding(.top, 16)
 
-            // Content area
-            if viewModel.isLoading {
-                ProgressView("Loading liked schools...")
-                    .padding()
-            } else if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(Color("Primary"))
-                    .padding()
-            } else if viewModel.likedSchools.isEmpty {
-                Text("No liked schools yet.")
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                // Scrollable list of SavedCardViews
-                ScrollView {
+                // Content area
+                if viewModel.isLoading {
+                    ProgressView("Loading liked schools...")
+                        .padding()
+                } else if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(Color("Primary"))
+                        .padding()
+                } else if viewModel.likedSchools.isEmpty {
+                    Text("No liked schools yet.")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
                     VStack(spacing: 16) {
                         ForEach(viewModel.likedSchools) { school in
                             SavedCardView(school: school, globalStudentState: globalStudentState)
@@ -72,7 +64,6 @@ struct SavedView: View {
                 }
             }
         }
-        .padding(.top, 16)
         .onAppear {
             Task {
                 await viewModel.fetchLikedSchools()
@@ -82,7 +73,6 @@ struct SavedView: View {
 }
 
 #Preview {
-    // Provide a mock environment object for preview:
     SavedView()
         .environmentObject(GlobalStudentDataState())
 }
