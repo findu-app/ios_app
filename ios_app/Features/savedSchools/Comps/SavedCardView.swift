@@ -9,63 +9,61 @@
 import SwiftUI
 
 struct SavedCardView: View {
-    let school: School
-    let rating: String?  // e.g. "A+", or nil if no rating
+    @StateObject private var viewModel: SavedCardViewModel
+
+    init(school: School, globalStudentState: GlobalStudentDataState) {
+        _viewModel = StateObject(wrappedValue: SavedCardViewModel(school: school, globalStudentState: globalStudentState))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // School Title & Rating
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(school.name ?? "Unknown School")
-                        .font(.headline)
+                    Text(viewModel.school.name ?? "Unknown School")
+                        .font(Font.custom("Plus Jakarta Sans SemiBold", size: 18))
+                        .foregroundColor(Color("OnSurface"))
                         .lineLimit(2)
-                    
-                    Text("\(school.city ?? ""), \(school.state ?? "")")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+
+                    Text("\(viewModel.school.city ?? ""), \(viewModel.school.state ?? "")")
+                        .font(Font.custom("Plus Jakarta Sans Medium", size: 14))
+                        .foregroundColor(Color("Secondary"))
                 }
                 Spacer()
-                if let rating = rating {
-                    Text(rating)
-                        .font(.title2)
-                        .foregroundColor(.green) // Or whichever color you prefer
-                }
+                Text(viewModel.matchScore)
+                    .font(Font.custom("Plus Jakarta Sans Bold", size: 24))
+                    .foregroundColor(StatFormatter.colorForMatchScoreCard(viewModel.matchScore))
             }
 
             // Tags, rendered by StatTagList
-            StatTagList(tags: buildTags())
+            StatTagList(tags: viewModel.tags)
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color("SurfaceContainer"))
+                .stroke(Color("Border"), lineWidth: 1)
         )
-    }
-
-    /// Build an array of dictionaries for `StatTagList`
-    private func buildTags() -> [[String: String]] {
-        var tags: [[String: String]] = []
-
-        // Conditionally include "Avg Aid"
-        if let avgAidValue = school.averageFinancialAid, avgAidValue != 0 {
-            let avgAid = StatFormatter.formatToDollarString(avgAidValue)
-            tags.append(["label": "Avg Aid", "stat": avgAid, "match": "High"])
+        .onTapGesture {
+            // Show the sheet when the card is tapped
+            viewModel.showSheet = true
         }
+        .sheet(isPresented: $viewModel.showSheet) {
+            // Pass the school and match data to the sheet
+            if let studentMatch = viewModel.studentMatch {CollegeInfoView(
+                school: viewModel.school,
+                studentMatchScore: studentMatch
+            )
+            .presentationDetents([.fraction(1)]) // Fullscreen height
+            .presentationDragIndicator(.visible) // Drag indicator
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.fetchMatchScore()
 
-        // Always include "Average ACT"
-        let act = StatFormatter.formatACTScore(school.actScore)
-        tags.append(["label": "Average ACT", "stat": act, "match": "Medium"])
-
-        // Always include "Student Size"
-        let size = "\(school.size)"
-        tags.append(["label": "Student Size", "stat": size, "match": "Low"])
-
-        // Always include "Avg Tuition"
-        let tuition = StatFormatter.formatToDollarString(school.inStateTuition)
-        tags.append(["label": "Avg Tuition", "stat": tuition, "match": "High"])
-
-        return tags
+                viewModel.buildTags()
+            }
+        }
     }
 }

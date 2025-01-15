@@ -21,24 +21,28 @@ struct SavedView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Header row
-            HStack {
+            HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading) {
                     Text("Liked Colleges")
-                        .font(.title)
+                        .font(Font.custom("Plus Jakarta Sans SemiBold", size: 24))
+                        .padding(.bottom, 4)
                     Text("\(viewModel.likedSchools.count) Liked Colleges")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .font(Font.custom("Plus Jakarta Sans Medium", size: 16))
+                        .foregroundColor(Color("Secondary"))
                 }
                 Spacer()
                 // Sort button or any other top-right action
                 Button(action: {
                     // Provide sorting logic if desired
                 }) {
-                    HStack {
+                    HStack(alignment: .center, spacing: 2) {
                         Text("Sort List")
-                        Image(systemName: "chevron.down")
+                            .font(Font.custom("Plus Jakarta Sans SemiBold", size: 18))
+                            .foregroundColor(Color("Secondary"))
+                        Image(systemName: "chevron.up.chevron.down")
+                            .foregroundColor(Color("Secondary"))
                     }
-                    .foregroundColor(.primary)
+                    // alignment here
                 }
             }
             .padding(.horizontal)
@@ -49,7 +53,7 @@ struct SavedView: View {
                     .padding()
             } else if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color("Primary"))
                     .padding()
             } else if viewModel.likedSchools.isEmpty {
                 Text("No liked schools yet.")
@@ -60,7 +64,7 @@ struct SavedView: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         ForEach(viewModel.likedSchools) { school in
-                            SavedCardView(school: school, rating: "A+")
+                            SavedCardView(school: school, globalStudentState: globalStudentState)
                                 .padding(.horizontal)
                         }
                     }

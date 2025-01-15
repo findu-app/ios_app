@@ -143,10 +143,26 @@ struct School: Decodable, Identifiable, Equatable {
         }
     
     var averageFinancialAid: Int? {
-        guard let coa = coaAcademicYear, coa > 0 else { return 0 }
-        let netPrice = (averageNetPricePublic ?? averageNetPricePrivate ?? 0)
-        guard netPrice > 0 else { return 0 }
-        return max(0, coa - netPrice)
+        guard let coa = coaAcademicYear, coa > 0 else {
+            print("COA is invalid for school: \(name)")
+            return nil
+        }
+
+        // Determine net price: use public if available, otherwise private, otherwise 0
+        let netPrice = (averageNetPricePublic ?? 0) > 0
+            ? averageNetPricePublic!
+            : (averageNetPricePrivate ?? 0) > 0
+                ? averageNetPricePrivate!
+                : 0
+
+        guard netPrice > 0 else {
+            print("Net Price is missing or invalid for school: \(name)")
+            return nil
+        }
+
+        let aid = max(0, coa - netPrice)
+        print("COA: \(coa), Net Price: \(netPrice), Avg Aid: \(aid) for school: \(name)")
+        return aid
     }
 
     var calculatedEmploymentRate: Float? {
