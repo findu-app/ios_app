@@ -69,7 +69,7 @@ struct HomeHeader: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color("SurfaceContainer"))
                             .stroke(
-                                Color("OnSurface"),
+                                Color("Border"),
                                 lineWidth: 1
                             )
                     )
@@ -106,9 +106,10 @@ struct HomeHeader: View {
                                         )
                                         .multilineTextAlignment(.leading)
                                         .padding(.vertical, 8)
+                                        .lineSpacing(4)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundColor(Color("OnSurface"))
-                                }
+                                }.frame(maxWidth: .infinity)
                                 .padding(.horizontal, 16)
                             }
                         }
@@ -128,6 +129,7 @@ struct HomeHeader: View {
             .padding(.bottom, 16)
             .presentationDetents([.medium, .large]) // Allow resizing
             .presentationDragIndicator(.visible)
+            .background(Color("Surface"))
         }
         .background(Color("Surface"))
     }

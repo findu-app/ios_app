@@ -47,5 +47,9 @@ class GlobalStudentDataState: ObservableObject {
             print("Error loading student info: \(error)")
         }
     }
+    
+    func reset() {
+            studentInfo = nil
+        }
 }
 

@@ -1,22 +1,10 @@
-//
-//  ContentView.swift
-//  ios_app
-//
-//  Created by Kenny Morales on 12/26/24.
-//
-
-//
-//  AppView.swift
-//  ios_app
-//
-//  Created by Wilson Overfield on 12/28/24.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     @State var isAuthenticated = false
     @EnvironmentObject var globalStudentState: GlobalStudentDataState
+    @AppStorage("selectedAppearance") private var selectedAppearance: String =
+        "system"
 
     var body: some View {
         Group {
@@ -25,6 +13,8 @@ struct ContentView: View {
                     StudentProfileCreationFlow()
                 } else {
                     HomeView()
+                        .preferredColorScheme(
+                            colorSchemeForAppearance(selectedAppearance))
                 }
             } else {
                 WelcomeView()
@@ -99,6 +89,13 @@ private func fetchStudentProfile(userId: String) async throws -> StudentInfo? {
     }
 }
 
-#Preview {
-    ContentView()
+private func colorSchemeForAppearance(_ appearance: String) -> ColorScheme? {
+    switch appearance {
+    case "dark":
+        return .dark
+    case "light":
+        return .light
+    default:
+        return nil  // System default
+    }
 }
