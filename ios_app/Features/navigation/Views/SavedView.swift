@@ -5,7 +5,6 @@ struct SavedView: View {
     @StateObject private var viewModel: SavedViewModel
     
     init() {
-        // Create the VM. We'll inject the environment object *after* init
         _viewModel = StateObject(
             wrappedValue: SavedViewModel(globalStudentState: GlobalStudentDataState())
         )
@@ -25,17 +24,9 @@ struct SavedView: View {
                             .foregroundColor(Color("Secondary"))
                     }
                     Spacer()
-                    // Sort button or any other top-right action
-                    Button(action: {
-                        // Provide sorting logic if desired
-                    }) {
-                        HStack(alignment: .center, spacing: 2) {
-                            Text("Sort List")
-                                .font(Font.custom("Plus Jakarta Sans SemiBold", size: 18))
-                                .foregroundColor(Color("Secondary"))
-                            Image(systemName: "chevron.up.chevron.down")
-                                .foregroundColor(Color("Secondary"))
-                        }
+
+                    SortMenu { field, ascending in
+                        viewModel.sortLikedSchools(by: field, ascending: ascending)
                     }
                 }
                 .padding(.horizontal)
