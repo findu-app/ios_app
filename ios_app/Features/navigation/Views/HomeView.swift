@@ -9,12 +9,16 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedTab: Tab = .explore
+    @State private var isOnSubPage: Bool = false
+    @EnvironmentObject var globalStudentState: GlobalStudentDataState
+
 
     var body: some View {
         VStack(spacing: 0) {
-            HomeHeader()
-
-            Spacer()
+            if !isOnSubPage {
+                HomeHeader()
+                Spacer()
+            }
 
             Group {
                 switch selectedTab {
@@ -22,11 +26,13 @@ struct HomeView: View {
                     SavedView()
                         .environmentObject(GlobalStudentDataState())
                 case .explore:
-                    ExploreView()
-                        .environmentObject(GlobalStudentDataState())
+                        ExploreView()
+                            .environmentObject(globalStudentState)
                 case .settings:
-                    SettingsView()
+                        SettingsView(isOnSubPage: $isOnSubPage)
+                            .environmentObject(globalStudentState)
                 }
+
             }
 
             Spacer()
