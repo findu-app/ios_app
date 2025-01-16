@@ -23,15 +23,14 @@ struct HomeView: View {
             Group {
                 switch selectedTab {
                 case .saved:
-                    AnyView(SavedView())
+                    SavedView()
+                        .environmentObject(GlobalStudentDataState())
                 case .explore:
-                    AnyView(
                         ExploreView()
-                            .environmentObject(globalStudentState))
+                            .environmentObject(globalStudentState)
                 case .settings:
-                    AnyView(
                         SettingsView(isOnSubPage: $isOnSubPage)
-                            .environmentObject(globalStudentState))
+                            .environmentObject(globalStudentState)
                 }
 
             }

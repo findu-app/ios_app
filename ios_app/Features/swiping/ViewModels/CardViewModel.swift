@@ -58,7 +58,7 @@ class CardViewModel: ObservableObject {
         ]
 
         // Filter out tags with "N/A" in the "stat" field
-        return tags.filter { $0["stat"] != "N/A" }
+        return tags.filter { $0["stat"] !=  "N/A" }
     }
 
 
