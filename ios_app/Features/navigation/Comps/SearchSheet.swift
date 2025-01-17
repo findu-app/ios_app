@@ -9,18 +9,15 @@ import SwiftUI
 
 struct SearchSheet: View {
     @Binding var isPresented: Bool
-    @Binding var query: String
-    @Binding var suggestions: [School]
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var debounceTask: Task<Void, Never>? = nil
+    @ObservedObject var viewModel: SearchSheetViewModel
+    @State private var showSchool: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Search Bar
-            TextField("Search schools...", text: $query)
-                .onChange(of: query) { newValue in
-                    debounceSearch(query: newValue)
+            TextField("Search schools...", text: $viewModel.query)
+                .onChange(of: viewModel.query) { newValue in
+                    viewModel.debounceSearch(query: newValue)
                 }
                 .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
                 .padding(12)
@@ -33,23 +30,24 @@ struct SearchSheet: View {
                 .padding(.top, 32)
 
             // Suggestions or Loading/Error state
-            if isLoading {
+            if viewModel.isLoading {
                 ProgressView()
                     .padding(.horizontal, 16)
-            } else if let errorMessage = errorMessage {
+            } else if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
                     .foregroundColor(.red)
                     .padding(.horizontal, 16)
-            } else if !suggestions.isEmpty {
+            } else if !viewModel.suggestions.isEmpty {
                 ScrollView {
                     VStack(alignment: .leading) {
-                        ForEach(suggestions.prefix(5), id: \.id) { school in
+                        ForEach(viewModel.suggestions.prefix(10), id: \.id) { school in
                             Button(action: {
-                                print("Selected school: \(school.name)")
-                                isPresented = false
-                                query = ""
-                                suggestions = []
+                                Task {
+                                    await viewModel.fetchMatch(for: school)
+                                    viewModel.selectedSchool = school
+                                    showSchool = true
+                                }
                             }) {
                                 Text(school.name)
                                     .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
@@ -64,7 +62,7 @@ struct SearchSheet: View {
                         }
                     }
                 }
-            } else if !query.isEmpty {
+            } else if !viewModel.query.isEmpty {
                 Text("No results found")
                     .font(Font.custom("Plus Jakarta Sans Regular", size: 16))
                     .foregroundColor(Color.gray)
@@ -74,48 +72,19 @@ struct SearchSheet: View {
             Spacer()
         }
         .padding(.bottom, 16)
-        .presentationDetents([.medium, .large]) // Allow resizing
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .background(Color("Surface"))
-    }
-
-    /// Debounces the search to avoid too many API calls
-    private func debounceSearch(query: String) {
-        debounceTask?.cancel() // Cancel the previous task if it's still running
-
-        debounceTask = Task { @MainActor in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // 300ms delay
-                Task { @MainActor in
-                    await fetchSuggestions(for: query)
-                }
+        .sheet(isPresented: $showSchool) {
+            if let school = viewModel.selectedSchool,
+               let matchScore = viewModel.studentMatchScore {
+                CollegeInfoView(
+                    school: school,
+                    studentMatchScore: matchScore
+                )
+                .presentationDetents([.fraction(1)])
+                .presentationDragIndicator(.visible)
             }
         }
-    }
-
-    /// Fetches suggestions based on the search query
-    private func fetchSuggestions(for query: String) async {
-        guard !query.isEmpty else {
-            suggestions = []
-            return
-        }
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            // Replace spaces with `+` for the tsquery format
-            let formattedQuery = query.replacingOccurrences(of: " ", with: "+")
-
-            let fetchedSuggestions: [School] = try await supabase.rpc(
-                "search_schools",
-                params: ["prefix": formattedQuery]
-            ).execute().value
-
-            suggestions = fetchedSuggestions
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-
-        isLoading = false
     }
 }

@@ -1,3 +1,11 @@
+//
+//  SearchSheetViewModel.swift
+//  ios_app
+//
+//  Created by Wilson Overfield on 1/17/25.
+//
+
+
 import SwiftUI
 import Combine
 
@@ -11,55 +19,52 @@ class SearchSheetViewModel: ObservableObject {
     
     private var debounceTask: Task<Void, Never>? = nil
     private let globalStudentState: GlobalStudentDataState
-    private let supabase: SupabaseClient
 
-    init(globalStudentState: GlobalStudentDataState, supabase: SupabaseClient) {
+    init(globalStudentState: GlobalStudentDataState) {
         self.globalStudentState = globalStudentState
-        self.supabase = supabase
     }
 
-    /// Handles query changes with debounce
-    func updateQuery(_ newValue: String) {
-        query = newValue
-        debounceTask?.cancel() // Cancel previous task if running
+        /// Debounces the search to avoid too many API calls
+        func debounceSearch(query: String) {
+            debounceTask?.cancel() // Cancel the previous task if it's still running
 
-        debounceTask = Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
-            await fetchSuggestions(for: query)
-        }
-    }
-
-    /// Fetches suggestions based on the query
-    func fetchSuggestions(for query: String) async {
-        guard !query.isEmpty else {
-            suggestions = []
-            return
-        }
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            let formattedQuery = query.replacingOccurrences(of: " ", with: "+")
-            let fetchedSuggestions: [School] = try await supabase.rpc(
-                "search_schools",
-                params: ["prefix": formattedQuery]
-            ).execute().value
-
-            await MainActor.run {
-                self.suggestions = fetchedSuggestions
-            }
-        } catch {
-            await MainActor.run {
-                self.errorMessage = error.localizedDescription
+            debounceTask = Task { @MainActor in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // 300ms delay
+                    Task { @MainActor in
+                        await self.fetchSuggestions(for: query)
+                    }
+                }
             }
         }
 
-        await MainActor.run {
-            self.isLoading = false
-        }
-    }
+        /// Fetches suggestions based on the search query
+        private func fetchSuggestions(for query: String) async {
+            guard !query.isEmpty else {
+                suggestions = []
+                return
+            }
 
+            isLoading = true
+            errorMessage = nil
+
+            do {
+                // Replace spaces with `+` for the tsquery format
+                let formattedQuery = query.replacingOccurrences(of: " ", with: "+")
+
+                let fetchedSuggestions: [School] = try await supabase.rpc(
+                    "search_schools",
+                    params: ["prefix": formattedQuery]
+                ).execute().value
+
+                suggestions = fetchedSuggestions
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+
+            isLoading = false
+        }
+
+    
     /// Fetches and calculates the match score between the student and a school
     func fetchMatch(for school: School) async {
         guard let studentProfile = globalStudentState.studentInfo else {
