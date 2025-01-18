@@ -46,46 +46,56 @@ class CardsViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            // Fetch schools from Supabase
-            let newSchools: [School] =
-                try await supabase
-                .rpc("get_random_schools", params: ["count": loadBatchSize])
-                .execute()
-                .value
-
-            // Filter out already swiped schools
-            let filtered = newSchools.filter {
-                !swipedSchoolIDs.contains($0.id)
-            }
-
             // Access the student profile
             guard let studentProfile = globalStudentState.studentInfo else {
                 print("No student profile available")
                 return
             }
+            
+            // Ensure the student_id is non-optional and properly formatted
+            if let unwrappedStudentID = UUID(uuidString: studentProfile.id) {
+                // Create the params object with the correctly formatted student_id and count
+                let params = GetRandomSchoolsParams(student_id: unwrappedStudentID, count: loadBatchSize)
+                print(params)
+                
+                // Execute the RPC call
+                let newSchools: [School] = try await supabase
+                    .rpc("get_random_schools", params: params)
+                    .execute()
+                    .value
+                
+                // Filter out already swiped schools
+                let filtered = newSchools.filter {
+                    !swipedSchoolIDs.contains($0.id)
+                }
 
-            // Compute match scores for the active student
-            for school in filtered {
-                let key = StudentSchoolKey(
-                    studentId: UUID(uuidString: studentProfile.id) ?? UUID(),
-                    schoolId: school.id
-                )
-                
-                // Compute the full match object
-                let match = MatchScoreCalculator.computeMatchScore(for: school, student: studentProfile)
-                
-                // Cache the match score as a string
-                localMatchScores[key] = match
+                // Compute match scores for the active student
+                for school in filtered {
+                    let key = StudentSchoolKey(
+                        studentId: UUID(uuidString: studentProfile.id) ?? UUID(),
+                        schoolId: school.id
+                    )
+                    
+                    // Compute the full match object
+                    let match = MatchScoreCalculator.computeMatchScore(for: school, student: studentProfile)
+                    
+                    // Cache the match score as a string
+                    localMatchScores[key] = match
+                }
+
+                // Append new schools for display
+                self.schools.append(contentsOf: filtered)
+            } else {
+                print("Error: student_id is nil or not valid")
             }
-
-            // Append new schools for display
-            self.schools.append(contentsOf: filtered)
+            
         } catch {
             errorMessage = error.localizedDescription
         }
 
         isLoading = false
     }
+
 
     func handleSwipe(direction: CardSwipeDirection) async {
         guard let topSchool = schools.first else { return }
