@@ -48,8 +48,11 @@ class GlobalStudentDataState: ObservableObject {
         }
     }
     
+    /// Resets the global state by clearing the studentInfo and removing it from UserDefaults.
     func reset() {
-            studentInfo = nil
-        }
+        studentInfo = nil
+        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        print("Global student state has been reset.")
+    }
 }
 

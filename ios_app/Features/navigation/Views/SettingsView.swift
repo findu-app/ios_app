@@ -136,6 +136,7 @@ struct SettingsView: View {
         do {
             try await supabase.auth.signOut()
             // Redirect to login or onboarding screen here
+            globalStudentState.reset()
             print("User signed out successfully.")
         } catch {
             print("Failed to sign out: \(error)")
